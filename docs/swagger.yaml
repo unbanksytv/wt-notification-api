@@ -1,0 +1,197 @@
+openapi: 3.0.0
+servers:
+  - description: Localhost
+    url: 'http://localhost:8080'
+info:
+  description: API for distribution of update notifications by means of publish / subscribe.
+  version: 0.1.0
+  title: WT updates API
+paths:
+  /:
+    get:
+      summary: API info
+      responses:
+        '200':
+          description: Basic information about this API instance.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  docs:
+                    type: string
+                    description: Link to the API documentation.
+                  info:
+                    type: string
+                    description: Link to more information about the API.
+                  version:
+                    type: string
+                    description: Deployed API version number.
+                  config:
+                    type: string
+                    description: Which config is the API using.
+  /publish:
+    post:
+      summary: Publish an update notification.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Update'
+      responses:
+        '204':
+          description: Notification has been accepted and processed.
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+  /subscriptions:
+    post:
+      summary: Create a subscription to get notifications.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+      responses:
+        '201':
+          description: Subscription has been successfully created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subscriptionId:
+                    type: string
+                    description: ID of the created subscription.
+                  accessKey:
+                    type: string
+                    description: Access key to be used for subscription management.
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityError'
+  '/subscriptions/{subscriptionId}':
+    parameters:
+      - name: subscriptionId
+        required: true
+        in: path
+        description: Subscription ID as returned by POST /subscriptions
+        schema:
+          type: string
+    delete:
+      summary: Cancel subscription.
+      security:
+        - AccessKey: []
+      responses:
+        '204':
+          description: Subscription was successfully cancelled.
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+components:
+  securitySchemes:
+    AccessKey:
+      type: apiKey
+      in: header
+      name: X-Access-Key
+  responses:
+    BadRequestError:
+      description: The server does not understand the request (HTTP code 400)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnauthorizedError:
+      description: >-
+        Authentication is requested for manipulation of the given resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ForbiddenError:
+      description: The existing authorization does not give the user permissions for the requested operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnprocessableEntityError:
+      description: Request body or params validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Action:
+      type: string
+      enum:
+        - hotelCreated
+        - hotelUpdated
+        - hotelDeleted
+    Subject:
+      type: string
+      enum:
+        - ratePlans
+        - availability
+        - description
+        - notifications
+    Update:
+      type: object
+      description: A single update notification.
+      required:
+        - wtIndexAddress
+        - hotelAddress
+        - action
+        - subjects
+      properties:
+        wtIndexAddress:
+          description: Helps to uniquely identify the hotel in question.
+          type: string
+        hotelAddress:
+          type: string
+        action:
+          $ref: '#/components/schemas/Action'
+        subjects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Subject'
+    Subscription:
+      type: object
+      description: A single update notification.
+      required:
+        - wtIndexAddress
+      properties:
+        wtIndexAddress:
+          description: Helps to uniquely identify the hotel in question.
+          type: string
+        hotelAddress:
+          description: Limit subscription to a specific hotel.
+          type: string
+        action:
+          $ref: '#/components/schemas/Action'
+        subjects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Subject'
+        url:
+          description: URL of the endpoint notifications will be relayed to.
+          type: string
+    Error:
+      title: Error
+      description: Default schema for errors returned by API.
+      properties:
+        status:
+          type: number
+          description: HTTP status
+        code:
+          type: string
+          description: Computer-readable error. Use this for comparison.
+        short:
+          type: string
+          description: Human-readable error with a short description of the error.
+        long:
+          type: string
+          description: Verbose explanation of what happened.
