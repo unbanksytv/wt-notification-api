@@ -1,4 +1,6 @@
 const path = require('path');
+
+const bodyParser = require('body-parser');
 const express = require('express');
 const morgan = require('morgan');
 const swaggerUi = require('swagger-ui-express');
@@ -7,6 +9,7 @@ const YAML = require('yamljs');
 
 const config = require('./config');
 const { version } = require('../package.json');
+const { HttpError, HttpInternalError, Http404Error, HttpBadRequestError } = require('./errors');
 
 const app = express();
 
@@ -19,6 +22,15 @@ swaggerDocument.servers = [{ url: config.baseUrl }];
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(cors());
+
+app.use(bodyParser.json());
+app.use((err, req, res, next) => {
+  // Catch and handle bodyParser errors.
+  if (err.statusCode === 400 && err.type === 'entity.parse.failed') {
+    return next(new HttpBadRequestError('badRequest', 'Invalid JSON.'));
+  }
+  next(err);
+});
 
 // Logg HTTP requests.
 app.use(morgan(':remote-addr :remote-user [:date[clf]] :method :url HTTP/:http-version :status :res[content-length] - :response-time ms', {
@@ -36,6 +48,21 @@ app.get('/', (req, res) => {
     config: process.env.WT_CONFIG,
     wtIndexAddress: config.wtIndexAddress,
   });
+});
+
+// 404 handler
+app.use('*', (req, res, next) => {
+  next(new Http404Error());
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  if (!(err instanceof HttpError)) {
+    config.logger.error(err.stack);
+    err = new HttpInternalError();
+  }
+
+  res.status(err.status).json(err.toPlainObject());
 });
 
 module.exports = {

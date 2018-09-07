@@ -25,5 +25,34 @@ describe('API', function () {
           expect(res.body).to.have.property('config');
         });
     });
+
+    it('should not panic upon malformed json data', async () => {
+      await request(server)
+        .get('/')
+        .send('sdndslsl')
+        .set('Content-Type', 'application/json')
+        .expect(400);
+    });
+
+    it('should properly implement CORS to be usable from anywhere', async () => {
+      await request(server)
+        .get('/')
+        .set('Content-Type', 'application/json')
+        .expect('Access-Control-Allow-Origin', '*');
+    });
+  });
+
+  describe('GET /unknown-endpoint', () => {
+    it('should return 404', async () => {
+      await request(server)
+        .get('/random-endpoint')
+        .expect(404)
+        .expect('content-type', /json/i)
+        .expect((res) => {
+          expect(res.body).to.have.property('code', '#notFound');
+          expect(res.body).to.have.property('short');
+          expect(res.body).to.have.property('long');
+        });
+    });
   });
 });
