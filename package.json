@@ -1,0 +1,62 @@
+{
+  "name": "wt-updates-api",
+  "version": "0.0.0",
+  "description": "API written in node.js to facilitate publish / subscribe communication in WindingTree.",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "eslint src test",
+    "test": "WT_CONFIG=test ./node_modules/.bin/nyc --reporter=text ./node_modules/mocha/bin/mocha --recursive --timeout 20000",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "start": "node src/index.js",
+    "dev": "WT_CONFIG=dev node src/index.js",
+    "createdb-dev": "WT_CONFIG=dev node management/createdb.js",
+    "createdb": "node management/createdb.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/windingtree/wt-updates-api.git"
+  },
+  "keywords": [
+    "winding-tree",
+    "api",
+    "nodejs",
+    "javascript"
+  ],
+  "author": "WT Dev Team <support@winidngtree.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/windingtree/wt-updates-api/issues"
+  },
+  "homepage": "https://github.com/windingtree/wt-updates-api#readme",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0",
+    "swagger-ui-express": "^4.0.1",
+    "winston": "^3.1.0",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "coveralls": "^3.0.2",
+    "eslint": "^5.2.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.0",
+    "eslint-plugin-standard": "^4.0.0",
+    "mocha": "^5.1.0",
+    "nyc": "^13.0.1",
+    "sinon": "^6.1.4",
+    "supertest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=10.9.0"
+  },
+  "nyc": {
+    "exclude": [
+      "test/",
+      "src/config"
+    ]
+  }
+}
