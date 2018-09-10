@@ -24,6 +24,7 @@ module.exports.createTable = async function () {
     table.string('hotel_address', 63);
     table.string('action', 63);
     table.text('url').notNullable();
+    table.boolean('active').notNullable().defaultTo(true);
     table.timestamps();
   });
 
@@ -44,8 +45,9 @@ module.exports.dropTable = async function () {
 
 function _normalize (data) {
   data = Object.assign({}, data);
+  data.active = (data.active === undefined) ? true : Boolean(data.active);
   for (let field of ['hotelAddress', 'action', 'subjects']) {
-    if (!data[field] || (data[field].length === 0)) {
+    if (([null, undefined, ''].indexOf(data[field]) !== -1) || (data[field].length === 0)) {
       delete data[field];
     }
   }
@@ -99,21 +101,15 @@ module.exports.create = async function (subscriptionData) {
   _validate(subscriptionData);
   const subscriptionId = (await db(SUBSCRIPTIONS_TABLE).insert({
     'wt_index': subscriptionData.wtIndex,
-    'hotel_address': subscriptionData.hotelAddress || null,
-    'action': subscriptionData.action || null,
+    'hotel_address': subscriptionData.hotelAddress,
+    'action': subscriptionData.action,
     'url': subscriptionData.url,
+    'active': subscriptionData.active,
   }))[0];
   for (let subject of (subscriptionData.subjects || [])) {
     await addSubject(subject, subscriptionId);
   }
-  return {
-    id: subscriptionId,
-    wtIndex: subscriptionData.wtIndex,
-    hotelAddress: subscriptionData.hotelAddress,
-    action: subscriptionData.action,
-    subjects: subscriptionData.subjects,
-    url: subscriptionData.url,
-  };
+  return Object.assign({ id: subscriptionId }, subscriptionData);
 };
 
 /**
@@ -123,7 +119,7 @@ module.exports.create = async function (subscriptionData) {
  * @return {Promise<Object>}
  */
 module.exports.get = async function (id) {
-  const subscription = (await db(SUBSCRIPTIONS_TABLE).select('id', 'wt_index', 'hotel_address', 'action', 'url').where({
+  const subscription = (await db(SUBSCRIPTIONS_TABLE).select('id', 'wt_index', 'hotel_address', 'action', 'url', 'active').where({
       'id': id,
     }))[0],
     subjects = (await db(SUBJECTS_TABLE).select('name').where({
@@ -135,6 +131,7 @@ module.exports.get = async function (id) {
     hotelAddress: subscription.hotel_address,
     action: subscription.action,
     url: subscription.url,
+    active: subscription.active,
     subjects: subjects,
   });
 };

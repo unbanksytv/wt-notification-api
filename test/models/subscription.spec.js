@@ -23,6 +23,7 @@ describe('models - subscription', () => {
       assert.property(subscription, 'action', 'hotelUpdated');
       assert.property(subscription, 'url', 'http://example.com/callback');
       assert.property(subscription, 'subjects', ['description', 'ratePlans']);
+      assert.property(subscription, 'active', true);
     });
 
     it('should work without optional attributes', async () => {
@@ -33,6 +34,7 @@ describe('models - subscription', () => {
       assert.property(subscription, 'id');
       assert.property(subscription, 'wtIndex', wtIndex);
       assert.property(subscription, 'url', 'http://example.com/callback');
+      assert.property(subscription, 'active', true);
       assert.equal(subscription.hotelAddress, undefined);
       assert.equal(subscription.action, undefined);
       assert.equal(subscription.subjects, undefined);
@@ -91,7 +93,7 @@ describe('models - subscription', () => {
         },
         { id } = await Subscription.create(data),
         subscription = await Subscription.get(id);
-      assert.deepEqual(subscription, Object.assign({ id }, data));
+      assert.deepEqual(subscription, Object.assign({ id, active: true }, data));
     });
 
     it('should normalize falsy values', async () => {
@@ -101,6 +103,7 @@ describe('models - subscription', () => {
           action: null,
           subjects: [],
           url: 'http://example.com/callback',
+          active: false,
         },
         { id } = await Subscription.create(data),
         subscription = await Subscription.get(id);
@@ -108,6 +111,7 @@ describe('models - subscription', () => {
         id,
         wtIndex,
         url: 'http://example.com/callback',
+        active: false
       });
     });
 
