@@ -1,7 +1,22 @@
+const web3 = require('web3');
+
 const { db } = require('../config');
 
 const SUBSCRIPTIONS_TABLE = 'subscriptions';
 const SUBJECTS_TABLE = 'subjects';
+
+ACTIONS = [
+  'hotelCreated',
+  'hotelUpdated',
+  'hotelDeleted',
+];
+
+SUBJECTS = [
+  'ratePlans',
+  'availability',
+  'description',
+  'notifications'
+];
 
 module.exports.createTable = async function () {
   await db.schema.createTable(SUBSCRIPTIONS_TABLE, (table) => {
@@ -28,6 +43,27 @@ module.exports.dropTable = async function () {
   await db.schema.dropTableIfExists(SUBSCRIPTIONS_TABLE);
 };
 
+class ValidationError extends Error {};
+
+function _validate(data) {
+  if (data.action && ACTIONS.indexOf(data.action) === -1) {
+    throw new ValidationError(`Unknown action: ${data.action}`);
+  }
+  if (data.subjects) {
+    for (let subject of data.subjects) {
+      if (SUBJECTS.indexOf(subject) === -1) {
+        throw new ValidationError(`Unknown subject: ${subject}`);
+      }
+    }
+  }
+  if (data.wtIndex && ! web3.utils.isAddress(data.wtIndex)) {
+    throw new ValidationError(`Invalid address: ${data.wtIndex}`);
+  }
+  if (data.hotelAddress && ! web3.utils.isAddress(data.hotelAddress)) {
+    throw new ValidationError(`Invalid address: ${data.hotelAddress}`);
+  }
+}
+
 /**
  * Create a new subject-subscription binding.
  *
@@ -50,6 +86,7 @@ async function addSubject (name, subscriptionId) {
  * @return {Promise<Object>}
  */
 module.exports.create = async function (subscriptionData) {
+  _validate(subscriptionData);
   const subscriptionId = (await db(SUBSCRIPTIONS_TABLE).insert({
     'wt_index': subscriptionData.wtIndex,
     'hotel_address': subscriptionData.hotelAddress || null,
@@ -65,7 +102,7 @@ module.exports.create = async function (subscriptionData) {
     hotelAddress: subscriptionData.hotelAddress,
     action: subscriptionData.action,
     subjects: subscriptionData.subjects,
-    url: subscriptionData.url
+    url: subscriptionData.url,
   };
 };
 
@@ -91,3 +128,5 @@ module.exports.get = async function (id) {
     subjects: subjects,
   };
 };
+
+module.exports.ValidationError = ValidationError;
