@@ -66,9 +66,6 @@ paths:
                   subscriptionId:
                     type: string
                     description: ID of the created subscription.
-                  accessKey:
-                    type: string
-                    description: Access key to be used for subscription management.
         '400':
           $ref: '#/components/responses/BadRequestError'
         '422':
@@ -83,8 +80,6 @@ paths:
           type: string
     delete:
       summary: Cancel subscription.
-      security:
-        - AccessKey: []
       responses:
         '204':
           description: Subscription was successfully cancelled.
@@ -93,11 +88,6 @@ paths:
         '403':
           $ref: '#/components/responses/ForbiddenError'
 components:
-  securitySchemes:
-    AccessKey:
-      type: apiKey
-      in: header
-      name: X-Access-Key
   responses:
     BadRequestError:
       description: The server does not understand the request (HTTP code 400)

@@ -26,17 +26,6 @@ HttpBadRequestError.status = 400;
 HttpBadRequestError.defaultCode = 'badRequest';
 HttpBadRequestError.defaultMsgShort = 'Bad request.';
 
-class HttpUnauthorizedError extends HttpError {};
-HttpUnauthorizedError.status = 401;
-HttpUnauthorizedError.defaultCode = 'unauthorized';
-HttpUnauthorizedError.defaultMsgShort = 'Not authorized.';
-HttpUnauthorizedError.defaultMsgLong = 'You need to provide a valid API access key and wallet password.';
-
-class HttpForbiddenError extends HttpError {};
-HttpForbiddenError.status = 403;
-HttpForbiddenError.defaultCode = 'forbidden';
-HttpForbiddenError.defaultMsgShort = 'Forbidden.';
-
 class Http404Error extends HttpError {};
 Http404Error.status = 404;
 Http404Error.defaultCode = 'notFound';
@@ -56,8 +45,6 @@ HttpInternalError.defaultMsgLong = 'Something went wrong. Please contact the adm
 
 module.exports = {
   HttpError,
-  HttpUnauthorizedError,
-  HttpForbiddenError,
   Http404Error,
   HttpBadRequestError,
   HttpValidationError,
