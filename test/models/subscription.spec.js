@@ -94,6 +94,23 @@ describe('models - subscription', () => {
       assert.deepEqual(subscription, Object.assign({ id }, data));
     });
 
+    it('should normalize falsy values', async () => {
+      const data = {
+          wtIndex,
+          hotelAddress: undefined,
+          action: null,
+          subjects: [],
+          url: 'http://example.com/callback',
+        },
+        { id } = await Subscription.create(data),
+        subscription = await Subscription.get(id);
+      assert.deepEqual(subscription, {
+        id,
+        wtIndex,
+        url: 'http://example.com/callback',
+      });
+    });
+
     it('should return undefined if no such account exists', async () => {
       const subscription = await Subscription.get(9923448);
       assert.equal(subscription, undefined);

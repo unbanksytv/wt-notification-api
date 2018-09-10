@@ -5,18 +5,17 @@ const { db } = require('../config');
 const SUBSCRIPTIONS_TABLE = 'subscriptions';
 const SUBJECTS_TABLE = 'subjects';
 
-ACTIONS = [
-  'hotelCreated',
-  'hotelUpdated',
-  'hotelDeleted',
-];
-
-SUBJECTS = [
-  'ratePlans',
-  'availability',
-  'description',
-  'notifications'
-];
+const ACTIONS = [
+    'hotelCreated',
+    'hotelUpdated',
+    'hotelDeleted',
+  ],
+  SUBJECTS = [
+    'ratePlans',
+    'availability',
+    'description',
+    'notifications',
+  ];
 
 module.exports.createTable = async function () {
   await db.schema.createTable(SUBSCRIPTIONS_TABLE, (table) => {
@@ -43,9 +42,19 @@ module.exports.dropTable = async function () {
   await db.schema.dropTableIfExists(SUBSCRIPTIONS_TABLE);
 };
 
+function _normalize (data) {
+  data = Object.assign({}, data);
+  for (let field of ['hotelAddress', 'action', 'subjects']) {
+    if (!data[field] || (data[field].length === 0)) {
+      delete data[field];
+    }
+  }
+  return data;
+}
+
 class ValidationError extends Error {};
 
-function _validate(data) {
+function _validate (data) {
   if (data.action && ACTIONS.indexOf(data.action) === -1) {
     throw new ValidationError(`Unknown action: ${data.action}`);
   }
@@ -56,10 +65,10 @@ function _validate(data) {
       }
     }
   }
-  if (data.wtIndex && ! web3.utils.isAddress(data.wtIndex)) {
+  if (data.wtIndex && !web3.utils.isAddress(data.wtIndex)) {
     throw new ValidationError(`Invalid address: ${data.wtIndex}`);
   }
-  if (data.hotelAddress && ! web3.utils.isAddress(data.hotelAddress)) {
+  if (data.hotelAddress && !web3.utils.isAddress(data.hotelAddress)) {
     throw new ValidationError(`Invalid address: ${data.hotelAddress}`);
   }
 }
@@ -86,6 +95,7 @@ async function addSubject (name, subscriptionId) {
  * @return {Promise<Object>}
  */
 module.exports.create = async function (subscriptionData) {
+  subscriptionData = _normalize(subscriptionData);
   _validate(subscriptionData);
   const subscriptionId = (await db(SUBSCRIPTIONS_TABLE).insert({
     'wt_index': subscriptionData.wtIndex,
@@ -119,14 +129,14 @@ module.exports.get = async function (id) {
     subjects = (await db(SUBJECTS_TABLE).select('name').where({
       'subscription_id': id,
     })).map((x) => x.name);
-  return subscription && {
+  return subscription && _normalize({
     id: subscription.id,
     wtIndex: subscription.wt_index,
     hotelAddress: subscription.hotel_address,
     action: subscription.action,
     url: subscription.url,
     subjects: subjects,
-  };
+  });
 };
 
 module.exports.ValidationError = ValidationError;
