@@ -11,7 +11,7 @@ module.exports = Object.assign({
       new winston.transports.Console({
         format: winston.format.simple(),
         stderrLevels: ['error'],
-      }), 
-    ],  
-  }), 
+      }),
+    ],
+  }),
 }, require(`./${env}`));

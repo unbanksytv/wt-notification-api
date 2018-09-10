@@ -1,5 +1,3 @@
-const { badGatewayStatus } = require('./config');
-
 class HttpError extends Error {
   constructor (code, msgLong, msgShort) {
     super();

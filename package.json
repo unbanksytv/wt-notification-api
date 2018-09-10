@@ -32,7 +32,9 @@
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "express": "^4.16.3",
+    "knex": "^0.15.2",
     "morgan": "^1.9.0",
+    "sqlite3": "^4.0.2",
     "swagger-ui-express": "^4.0.1",
     "winston": "^3.1.0",
     "yamljs": "^0.3.0"
