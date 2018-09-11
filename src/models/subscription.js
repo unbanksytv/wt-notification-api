@@ -21,7 +21,7 @@ module.exports.createTable = async function () {
   await db.schema.createTable(SUBSCRIPTIONS_TABLE, (table) => {
     table.increments().primary();
     table.string('wt_index', 63).notNullable();
-    table.string('hotel_address', 63);
+    table.string('hotel', 63);
     table.string('action', 63);
     table.text('url').notNullable();
     table.boolean('active').notNullable().defaultTo(true);
@@ -46,7 +46,7 @@ module.exports.dropTable = async function () {
 function _normalize (data) {
   data = Object.assign({}, data);
   data.active = (data.active === undefined) ? true : Boolean(data.active);
-  for (let field of ['hotelAddress', 'action', 'subjects']) {
+  for (let field of ['hotel', 'action', 'subjects']) {
     if (([null, undefined, ''].indexOf(data[field]) !== -1) || (data[field].length === 0)) {
       delete data[field];
     }
@@ -70,8 +70,8 @@ function _validate (data) {
   if (data.wtIndex && !web3.utils.isAddress(data.wtIndex)) {
     throw new ValidationError(`Invalid address: ${data.wtIndex}`);
   }
-  if (data.hotelAddress && !web3.utils.isAddress(data.hotelAddress)) {
-    throw new ValidationError(`Invalid address: ${data.hotelAddress}`);
+  if (data.hotel && !web3.utils.isAddress(data.hotel)) {
+    throw new ValidationError(`Invalid address: ${data.hotel}`);
   }
 }
 
@@ -101,7 +101,7 @@ module.exports.create = async function (subscriptionData) {
   _validate(subscriptionData);
   const subscriptionId = (await db(SUBSCRIPTIONS_TABLE).insert({
     'wt_index': subscriptionData.wtIndex,
-    'hotel_address': subscriptionData.hotelAddress,
+    'hotel': subscriptionData.hotel,
     'action': subscriptionData.action,
     'url': subscriptionData.url,
     'active': subscriptionData.active,
@@ -119,7 +119,7 @@ module.exports.create = async function (subscriptionData) {
  * @return {Promise<Object>}
  */
 module.exports.get = async function (id) {
-  const subscription = (await db(SUBSCRIPTIONS_TABLE).select('id', 'wt_index', 'hotel_address', 'action', 'url', 'active').where({
+  const subscription = (await db(SUBSCRIPTIONS_TABLE).select('id', 'wt_index', 'hotel', 'action', 'url', 'active').where({
       'id': id,
     }))[0],
     subjects = (await db(SUBJECTS_TABLE).select('name').where({
@@ -128,7 +128,7 @@ module.exports.get = async function (id) {
   return subscription && _normalize({
     id: subscription.id,
     wtIndex: subscription.wt_index,
-    hotelAddress: subscription.hotel_address,
+    hotel: subscription.hotel,
     action: subscription.action,
     url: subscription.url,
     active: subscription.active,

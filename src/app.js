@@ -10,6 +10,7 @@ const YAML = require('yamljs');
 const config = require('./config');
 const { version } = require('../package.json');
 const { HttpError, HttpInternalError, Http404Error, HttpBadRequestError } = require('./errors');
+const { createSubscription } = require('./controllers/subscriptions');
 
 const app = express();
 
@@ -49,6 +50,9 @@ app.get('/', (req, res) => {
     wtIndexAddress: config.wtIndexAddress,
   });
 });
+
+// Subscriptions
+app.post('/subscriptions', createSubscription);
 
 // 404 handler
 app.use('*', (req, res, next) => {

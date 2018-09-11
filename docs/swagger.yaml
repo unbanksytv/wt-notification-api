@@ -162,14 +162,14 @@ components:
       type: object
       description: A single update notification.
       required:
-        - wtIndexAddress
-        - hotelAddress
+        - wtIndex
+        - hotel
         - scope
       properties:
-        wtIndexAddress:
+        wtIndex:
           description: Helps to uniquely identify the hotel in question.
           type: string
-        hotelAddress:
+        hotel:
           type: string
         scope:
           description: Denote the scope of the notification.
@@ -181,13 +181,13 @@ components:
       type: object
       description: A single update notification.
       required:
-        - wtIndexAddress
+        - wtIndex
         - scope
       properties:
-        wtIndexAddress:
+        wtIndex:
           description: Helps to uniquely identify the hotel in question.
           type: string
-        hotelAddress:
+        hotel:
           description: Limit subscription to a specific hotel.
           type: string
         scope:

@@ -5,21 +5,21 @@ const Subscription = require('../../src/models/subscription');
 
 // Define some dummy valid addresses.
 const wtIndex = '0x7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b',
-  hotelAddress = '0x6a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a';
+  hotel = '0x6a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a';
 
 describe('models - subscription', () => {
   describe('create', () => {
     it('should create a new subscription and return its representation', async () => {
       const subscription = await Subscription.create({
         wtIndex,
-        hotelAddress,
+        hotel,
         action: 'hotelCreated',
         subjects: ['description', 'ratePlans'],
         url: 'http://example.com/callback',
       });
       assert.property(subscription, 'id');
       assert.property(subscription, 'wtIndex', wtIndex);
-      assert.property(subscription, 'hotelAddress', hotelAddress);
+      assert.property(subscription, 'hotel', hotel);
       assert.property(subscription, 'action', 'hotelUpdated');
       assert.property(subscription, 'url', 'http://example.com/callback');
       assert.property(subscription, 'subjects', ['description', 'ratePlans']);
@@ -35,7 +35,7 @@ describe('models - subscription', () => {
       assert.property(subscription, 'wtIndex', wtIndex);
       assert.property(subscription, 'url', 'http://example.com/callback');
       assert.property(subscription, 'active', true);
-      assert.equal(subscription.hotelAddress, undefined);
+      assert.equal(subscription.hotel, undefined);
       assert.equal(subscription.action, undefined);
       assert.equal(subscription.subjects, undefined);
     });
@@ -86,7 +86,7 @@ describe('models - subscription', () => {
     it('should get a previously created subscription', async () => {
       const data = {
           wtIndex,
-          hotelAddress,
+          hotel,
           action: 'hotelDeleted',
           subjects: ['ratePlans'],
           url: 'http://example.com/callback',
@@ -99,7 +99,7 @@ describe('models - subscription', () => {
     it('should normalize falsy values', async () => {
       const data = {
           wtIndex,
-          hotelAddress: undefined,
+          hotel: undefined,
           action: null,
           subjects: [],
           url: 'http://example.com/callback',
@@ -111,7 +111,7 @@ describe('models - subscription', () => {
         id,
         wtIndex,
         url: 'http://example.com/callback',
-        active: false
+        active: false,
       });
     });
 
