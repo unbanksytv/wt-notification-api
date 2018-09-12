@@ -1,6 +1,7 @@
 const web3 = require('web3');
 
 const { db } = require('../config');
+const { ValidationError } = require('../validators');
 
 const SUBSCRIPTIONS_TABLE = 'subscriptions';
 const SUBJECTS_TABLE = 'subjects';
@@ -53,8 +54,6 @@ function _normalize (data) {
   }
   return data;
 }
-
-class ValidationError extends Error {};
 
 function _validate (data) {
   if (data.action && ACTIONS.indexOf(data.action) === -1) {
@@ -135,5 +134,3 @@ module.exports.get = async function (id) {
     subjects: subjects,
   });
 };
-
-module.exports.ValidationError = ValidationError;

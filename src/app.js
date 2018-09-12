@@ -65,7 +65,6 @@ app.use((err, req, res, next) => {
     config.logger.error(err.stack);
     err = new HttpInternalError();
   }
-
   res.status(err.status).json(err.toPlainObject());
 });
 

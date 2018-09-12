@@ -1,0 +1,89 @@
+{
+  "type": "object",
+  "description": "A single update notification.",
+  "definitions": {
+    "CreatedScope": {
+      "type": "object",
+      "description": "Hotel creation scope.",
+      "required": [
+        "action"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "hotelCreated"
+          ]
+        }
+      }
+    },
+    "UpdatedScope": {
+      "type": "object",
+      "description": "Hotel update scope.",
+      "required": [
+        "action"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "hotelUpdated"
+          ]
+        },
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "ratePlans",
+              "availability",
+              "description",
+              "notifications"
+            ]
+          }
+        }
+      }
+    },
+    "DeletedScope": {
+      "type": "object",
+      "description": "Hotel deletion scope.",
+      "required": [
+        "action"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "hotelDeleted"
+          ]
+        }
+      }
+    }
+  },
+  "required": [
+    "wtIndex",
+    "url"
+  ],
+  "properties": {
+    "wtIndex": {
+      "description": "Helps to uniquely identify the hotel in question.",
+      "type": "string"
+    },
+    "hotel": {
+      "description": "Limit subscription to a specific hotel.",
+      "type": "string"
+    },
+    "scope": {
+      "description": "Select the notification scope.",
+      "oneOf": [
+        { "$ref": "#/definitions/CreatedScope" },
+        { "$ref": "#/definitions/UpdatedScope" },
+        { "$ref": "#/definitions/DeletedScope" }
+       ]
+    },
+    "url": {
+      "description": "URL of the endpoint notifications will be relayed to.",
+      "type": "string"
+    }
+  }
+}

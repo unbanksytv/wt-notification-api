@@ -2,6 +2,7 @@
 const { assert } = require('chai');
 
 const Subscription = require('../../src/models/subscription');
+const { ValidationError } = require('../../src/validators');
 
 // Define some dummy valid addresses.
 const wtIndex = '0x7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b',
@@ -49,7 +50,7 @@ describe('models - subscription', () => {
         });
         throw new Error('Should have raised an error.');
       } catch (err) {
-        assert.instanceOf(err, Subscription.ValidationError);
+        assert.instanceOf(err, ValidationError);
         assert.match(err.message, /^Unknown action/);
       }
     });
@@ -64,7 +65,7 @@ describe('models - subscription', () => {
         });
         throw new Error('Should have raised an error.');
       } catch (err) {
-        assert.instanceOf(err, Subscription.ValidationError);
+        assert.instanceOf(err, ValidationError);
         assert.match(err.message, /^Unknown subject/);
       }
     });
@@ -77,7 +78,7 @@ describe('models - subscription', () => {
         });
         throw new Error('Should have raised an error.');
       } catch (err) {
-        assert.instanceOf(err, Subscription.ValidationError);
+        assert.instanceOf(err, ValidationError);
       }
     });
   });

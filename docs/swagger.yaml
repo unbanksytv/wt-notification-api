@@ -115,10 +115,6 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
-    AllChangesScope:
-      type: object
-      description: A generic scope that covers all changes.
-      properties:
     CreatedScope:
       type: object
       description: Hotel creation scope.
@@ -182,7 +178,7 @@ components:
       description: A single update notification.
       required:
         - wtIndex
-        - scope
+        - url
       properties:
         wtIndex:
           description: Helps to uniquely identify the hotel in question.
@@ -193,7 +189,6 @@ components:
         scope:
           description: Select the notification scope.
           oneOf:
-            $ref: '#/components/schemas/AllChangesScope'
             $ref: '#/components/schemas/CreatedScope'
             $ref: '#/components/schemas/DeletedScope'
             $ref: '#/components/schemas/UpdatedScope'
