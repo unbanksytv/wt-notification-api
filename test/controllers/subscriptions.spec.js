@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint-disable promise/no-callback-in-promise */
 const { assert } = require('chai');
 const request = require('supertest');
 
@@ -141,7 +142,7 @@ describe('controllers - subscription', function () {
 
     it('should return 404 when the deleted subscription does not exist', (done) => {
       request(server)
-        .delete(`/subscriptions/dummy`)
+        .delete('/subscriptions/dummy')
         .expect(404)
         .end(done);
     });
@@ -150,7 +151,7 @@ describe('controllers - subscription', function () {
       Subscription.create({
         wtIndex,
         url: 'http://example.com/callback',
-        active: false
+        active: false,
       }).then((subscription) => {
         request(server)
           .delete(`/subscriptions/${subscription.id}`)
