@@ -145,6 +145,8 @@ components:
               - availability
               - description
               - notifications
+              - dataIndex
+              - onChain
     Update:
       type: object
       description: A single update notification.

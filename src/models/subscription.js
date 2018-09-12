@@ -17,6 +17,8 @@ const ACTIONS = [
     'availability',
     'description',
     'notifications',
+    'dataIndex',
+    'onChain',
   ],
   ID_LENGTH = 32;
 
