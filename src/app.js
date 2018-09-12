@@ -10,7 +10,7 @@ const YAML = require('yamljs');
 const config = require('./config');
 const { version } = require('../package.json');
 const { HttpError, HttpInternalError, Http404Error, HttpBadRequestError } = require('./errors');
-const { createSubscription } = require('./controllers/subscriptions');
+const subscriptions = require('./controllers/subscriptions');
 
 const app = express();
 
@@ -52,7 +52,8 @@ app.get('/', (req, res) => {
 });
 
 // Subscriptions
-app.post('/subscriptions', createSubscription);
+app.post('/subscriptions', subscriptions.create);
+app.delete('/subscriptions/:id', subscriptions.deactivate);
 
 // 404 handler
 app.use('*', (req, res, next) => {

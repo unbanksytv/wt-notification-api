@@ -83,10 +83,8 @@ paths:
       responses:
         '204':
           description: Subscription was successfully cancelled.
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
 components:
   responses:
     BadRequestError:
@@ -95,15 +93,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    UnauthorizedError:
-      description: >-
-        Authentication is requested for manipulation of the given resource.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    ForbiddenError:
-      description: The existing authorization does not give the user permissions for the requested operation.
+    NotFoundError:
+      description: The requested resource was not found.
       content:
         application/json:
           schema:

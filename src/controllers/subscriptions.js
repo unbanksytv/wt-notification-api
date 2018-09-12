@@ -1,12 +1,12 @@
 const Subscription = require('../models/subscription');
-const { HttpValidationError } = require('../errors');
+const { HttpValidationError, Http404Error } = require('../errors');
 
 const validators = require('../validators');
 
 /**
  * Create a new subscription.
  */
-module.exports.createSubscription = async (req, res, next) => {
+module.exports.create = async (req, res, next) => {
   try {
     // 1. Validate request payload.
     validators.validateSubscriptionRequest(req.body);
@@ -26,5 +26,17 @@ module.exports.createSubscription = async (req, res, next) => {
       return next(new HttpValidationError('validationFailed', err.message));
     }
     next(err);
+  }
+};
+
+/**
+ * Deactivate a subscription.
+ */
+module.exports.deactivate = async (req, res, next) => {
+  const deactivated = await Subscription.deactivate(req.params.id);
+  if (deactivated) {
+    res.sendStatus(204);
+  } else {
+    next(new Http404Error('notFound', `No active subscription with ID ${req.params.id} found.`));
   }
 };

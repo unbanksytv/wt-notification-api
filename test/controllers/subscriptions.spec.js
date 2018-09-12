@@ -27,7 +27,7 @@ describe('controllers - subscription', function () {
     server.close();
   });
 
-  describe('POST /hotels', () => {
+  describe('POST /subscriptions', () => {
     it('should create a new subscription record and return its ID', (done) => {
       const subscriptionData = _getSubscriptionData();
 
@@ -111,6 +111,52 @@ describe('controllers - subscription', function () {
         .send(subscriptionData)
         .expect(422)
         .end(done);
+    });
+  });
+
+  describe('DELETE /subscriptions/:id', () => {
+    // Define a dummy valid address.
+    const wtIndex = '0x7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b';
+
+    it('should deactivate and existing subscription', (done) => {
+      Subscription.create({
+        wtIndex,
+        url: 'http://example.com/callback',
+      }).then((subscription) => {
+        request(server)
+          .delete(`/subscriptions/${subscription.id}`)
+          .expect(204)
+          .end(async (err, res) => {
+            if (err) return done(err);
+            try {
+              const sub = await Subscription.get(subscription.id);
+              assert.equal(sub.active, false);
+              done();
+            } catch (err) {
+              done(err);
+            }
+          });
+      }).catch(done);
+    });
+
+    it('should return 404 when the deleted subscription does not exist', (done) => {
+      request(server)
+        .delete(`/subscriptions/dummy`)
+        .expect(404)
+        .end(done);
+    });
+
+    it('should return 404 when the deleted subscription has already been deactivated', (done) => {
+      Subscription.create({
+        wtIndex,
+        url: 'http://example.com/callback',
+        active: false
+      }).then((subscription) => {
+        request(server)
+          .delete(`/subscriptions/${subscription.id}`)
+          .expect(404)
+          .end(done);
+      }).catch(done);
     });
   });
 });

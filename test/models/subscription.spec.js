@@ -121,4 +121,30 @@ describe('models - subscription', () => {
       assert.equal(subscription, undefined);
     });
   });
+
+  describe('deactivate', () => {
+    it('should deactivate an existing Subscription', async () => {
+      let subscription = await Subscription.create({
+        wtIndex,
+        url: 'http://example.com/callback',
+      });
+      assert.property(subscription, 'active', true);
+      await Subscription.deactivate(subscription.id);
+      subscription = await Subscription.get(subscription.id);
+      assert.property(subscription, 'active', false);
+    });
+
+    it('should return boolean based on whether the deactivation was successful or not', async () => {
+      const subscription = await Subscription.create({
+        wtIndex,
+        url: 'http://example.com/callback',
+      });
+      let deactivated = (await Subscription.deactivate(subscription.id));
+      assert.equal(deactivated, true);
+      deactivated = (await Subscription.deactivate(subscription.id));
+      assert.equal(deactivated, false); // Second deactivation did noting.
+      deactivated = (await Subscription.deactivate('nonexistent'));
+      assert.equal(deactivated, false);
+    });
+  });
 });

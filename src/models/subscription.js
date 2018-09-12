@@ -134,3 +134,15 @@ module.exports.get = async function (id) {
     subjects: subjects,
   });
 };
+
+/**
+ * Deactivate a subscription.
+ *
+ * @param {String} subscriptionId
+ * @return {Promise<boolean>}
+ */
+module.exports.deactivate = async function (id) {
+  return Boolean(await db(SUBSCRIPTIONS_TABLE).where('id', id).andWhere('active', true).update({
+    'active': false,
+  }));
+};
