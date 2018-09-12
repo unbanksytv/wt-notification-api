@@ -10,4 +10,4 @@ module.exports.validateSubscriptionRequest = function (data) {
     const msg = tv4.error.message + ': ' + tv4.error.dataPath;
     throw new ValidationError(msg);
   }
-}
+};
