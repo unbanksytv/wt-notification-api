@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const web3 = require('web3');
 
 const { db } = require('../config');
@@ -16,11 +17,12 @@ const ACTIONS = [
     'availability',
     'description',
     'notifications',
-  ];
+  ],
+  ID_LENGTH = 32;
 
 module.exports.createTable = async function () {
   await db.schema.createTable(SUBSCRIPTIONS_TABLE, (table) => {
-    table.increments().primary();
+    table.string('id', ID_LENGTH).primary();
     table.string('wt_index', 63).notNullable();
     table.string('hotel', 63);
     table.string('action', 63);
@@ -32,7 +34,7 @@ module.exports.createTable = async function () {
   await db.schema.createTable(SUBJECTS_TABLE, (table) => {
     table.increments().primary();
     table.string('name', 63);
-    table.integer('subscription_id').unsigned().notNullable();
+    table.string('subscription_id', ID_LENGTH).notNullable();
 
     table.foreign('subscription_id').references('id').inTable(SUBSCRIPTIONS_TABLE);
     table.unique(['name', 'subscription_id']);
@@ -43,6 +45,17 @@ module.exports.dropTable = async function () {
   await db.schema.dropTableIfExists(SUBJECTS_TABLE);
   await db.schema.dropTableIfExists(SUBSCRIPTIONS_TABLE);
 };
+
+async function _generateID () {
+  return new Promise((resolve, reject) => {
+    crypto.randomBytes(ID_LENGTH / 2, (err, buffer) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(buffer.toString('hex'));
+    });
+  });
+}
 
 function _normalize (data) {
   data = Object.assign({}, data);
@@ -98,17 +111,19 @@ async function addSubject (name, subscriptionId) {
 module.exports.create = async function (subscriptionData) {
   subscriptionData = _normalize(subscriptionData);
   _validate(subscriptionData);
-  const subscriptionId = (await db(SUBSCRIPTIONS_TABLE).insert({
+  const id = await _generateID();
+  await db(SUBSCRIPTIONS_TABLE).insert({
+    'id': id,
     'wt_index': subscriptionData.wtIndex,
     'hotel': subscriptionData.hotel,
     'action': subscriptionData.action,
     'url': subscriptionData.url,
     'active': subscriptionData.active,
-  }))[0];
+  });
   for (let subject of (subscriptionData.subjects || [])) {
-    await addSubject(subject, subscriptionId);
+    await addSubject(subject, id);
   }
-  return Object.assign({ id: subscriptionId }, subscriptionData);
+  return Object.assign({ id }, subscriptionData);
 };
 
 /**

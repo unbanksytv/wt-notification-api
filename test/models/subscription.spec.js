@@ -19,6 +19,7 @@ describe('models - subscription', () => {
         url: 'http://example.com/callback',
       });
       assert.property(subscription, 'id');
+      assert.equal(subscription.id.length, 32);
       assert.property(subscription, 'wtIndex', wtIndex);
       assert.property(subscription, 'hotel', hotel);
       assert.property(subscription, 'action', 'hotelUpdated');
