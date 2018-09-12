@@ -28,7 +28,7 @@ module.exports.createTable = async function () {
     table.string('action', 63);
     table.text('url').notNullable();
     table.boolean('active').notNullable().defaultTo(true);
-    table.timestamps();
+    table.timestamps(true, true);
   });
 
   await db.schema.createTable(SUBJECTS_TABLE, (table) => {
@@ -159,5 +159,6 @@ module.exports.get = async function (id) {
 module.exports.deactivate = async function (id) {
   return Boolean(await db(SUBSCRIPTIONS_TABLE).where('id', id).andWhere('active', true).update({
     'active': false,
+    'updated_at': db.fn.now(),
   }));
 };
