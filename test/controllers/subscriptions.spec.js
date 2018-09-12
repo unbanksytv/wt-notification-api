@@ -10,7 +10,7 @@ function _getSubscriptionData () {
     wtIndex: '0x7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b',
     hotel: '0x6a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a',
     scope: {
-      action: 'hotelUpdated',
+      action: 'update',
       subjects: ['description', 'ratePlans'],
     },
     url: 'https://example.com/',

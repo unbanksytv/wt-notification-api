@@ -115,7 +115,7 @@ components:
         action:
           type: string
           enum:
-            - hotelCreated
+            - create
     DeletedScope:
       type: object
       description: Hotel deletion scope.
@@ -125,7 +125,7 @@ components:
         action:
           type: string
           enum:
-            - hotelDeleted
+            - delete
     UpdatedScope:
       type: object
       description: Hotel update scope.
@@ -135,7 +135,7 @@ components:
         action:
           type: string
           enum:
-            - hotelUpdated
+            - update
         subjects:
           type: array
           items:
@@ -161,9 +161,9 @@ components:
         scope:
           description: Denote the scope of the notification.
           oneOf:
-            $ref: '#/components/schemas/CreatedScope'
-            $ref: '#/components/schemas/DeletedScope'
-            $ref: '#/components/schemas/UpdatedScope'
+            - $ref: '#/components/schemas/CreatedScope'
+            - $ref: '#/components/schemas/DeletedScope'
+            - $ref: '#/components/schemas/UpdatedScope'
     Subscription:
       type: object
       description: A single update notification.
@@ -180,9 +180,9 @@ components:
         scope:
           description: Select the notification scope.
           oneOf:
-            $ref: '#/components/schemas/CreatedScope'
-            $ref: '#/components/schemas/DeletedScope'
-            $ref: '#/components/schemas/UpdatedScope'
+            - $ref: '#/components/schemas/CreatedScope'
+            - $ref: '#/components/schemas/DeletedScope'
+            - $ref: '#/components/schemas/UpdatedScope'
         url:
           description: URL of the endpoint notifications will be relayed to.
           type: string

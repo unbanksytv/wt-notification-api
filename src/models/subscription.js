@@ -8,9 +8,9 @@ const SUBSCRIPTIONS_TABLE = 'subscriptions';
 const SUBJECTS_TABLE = 'subjects';
 
 const ACTIONS = [
-    'hotelCreated',
-    'hotelUpdated',
-    'hotelDeleted',
+    'create',
+    'update',
+    'delete',
   ],
   SUBJECTS = [
     'ratePlans',

@@ -12,7 +12,7 @@
         "action": {
           "type": "string",
           "enum": [
-            "hotelCreated"
+            "create"
           ]
         }
       }
@@ -27,7 +27,7 @@
         "action": {
           "type": "string",
           "enum": [
-            "hotelUpdated"
+            "update"
           ]
         },
         "subjects": {
@@ -54,7 +54,7 @@
         "action": {
           "type": "string",
           "enum": [
-            "hotelDeleted"
+            "delete"
           ]
         }
       }

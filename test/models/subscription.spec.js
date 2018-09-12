@@ -14,7 +14,7 @@ describe('models - subscription', () => {
       const subscription = await Subscription.create({
         wtIndex,
         hotel,
-        action: 'hotelCreated',
+        action: 'create',
         subjects: ['description', 'ratePlans'],
         url: 'http://example.com/callback',
       });
@@ -22,7 +22,7 @@ describe('models - subscription', () => {
       assert.equal(subscription.id.length, 32);
       assert.property(subscription, 'wtIndex', wtIndex);
       assert.property(subscription, 'hotel', hotel);
-      assert.property(subscription, 'action', 'hotelUpdated');
+      assert.property(subscription, 'action', 'update');
       assert.property(subscription, 'url', 'http://example.com/callback');
       assert.property(subscription, 'subjects', ['description', 'ratePlans']);
       assert.property(subscription, 'active', true);
@@ -61,7 +61,7 @@ describe('models - subscription', () => {
         await Subscription.create({
           wtIndex,
           url: 'http://example.com/callback',
-          action: 'hotelUpdated',
+          action: 'update',
           subjects: ['dummy'],
         });
         throw new Error('Should have raised an error.');
@@ -89,7 +89,7 @@ describe('models - subscription', () => {
       const data = {
           wtIndex,
           hotel,
-          action: 'hotelDeleted',
+          action: 'delete',
           subjects: ['ratePlans'],
           url: 'http://example.com/callback',
         },
