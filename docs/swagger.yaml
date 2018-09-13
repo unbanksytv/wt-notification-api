@@ -106,9 +106,20 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
+    HotelSubjects:
+      type: array
+      items:
+        type: string
+        enum:
+          - ratePlans
+          - availability
+          - description
+          - notifications
+          - dataIndex
+          - onChain
     CreatedScope:
       type: object
-      description: Hotel creation scope.
+      description: Resource creation scope.
       required:
         - action
       properties:
@@ -118,7 +129,7 @@ components:
             - create
     DeletedScope:
       type: object
-      description: Hotel deletion scope.
+      description: Resource deletion scope.
       required:
         - action
       properties:
@@ -128,7 +139,7 @@ components:
             - delete
     UpdatedScope:
       type: object
-      description: Hotel update scope.
+      description: Resource update scope.
       required:
         - action
       properties:
@@ -137,28 +148,28 @@ components:
           enum:
             - update
         subjects:
-          type: array
-          items:
-            type: string
-            enum:
-              - ratePlans
-              - availability
-              - description
-              - notifications
-              - dataIndex
-              - onChain
+          description: A list of updated resouce properties.
+          oneOf:
+            - $ref: '#/components/schemas/HotelSubjects'
     Update:
       type: object
       description: A single update notification.
       required:
         - wtIndex
-        - hotel
+        - resourceType
+        - resourceAddress
         - scope
       properties:
         wtIndex:
-          description: Helps to uniquely identify the hotel in question.
+          description: Helps to uniquely identify the resource in question.
           type: string
-        hotel:
+        resourceType:
+          description: Specifies the type of resource (hotel, ...) to be followed. (We assume multiple resource types will exist in the future.)
+          type: string
+          enum:
+            - hotel
+        resourceAddress:
+          description: Limit subscription to a specific resource (e.g. a specific hotel).
           type: string
         scope:
           description: Denote the scope of the notification.
@@ -171,13 +182,19 @@ components:
       description: A single update notification.
       required:
         - wtIndex
+        - resourceType
         - url
       properties:
         wtIndex:
-          description: Helps to uniquely identify the hotel in question.
+          description: Helps to uniquely identify the resource in question.
           type: string
-        hotel:
-          description: Limit subscription to a specific hotel.
+        resourceType:
+          description: Specifies the type of resource (hotel, ...) to be followed. (We assume multiple resource types will exist in the future.)
+          type: string
+          enum:
+            - hotel
+        resourceAddress:
+          description: Limit subscription to a specific resource (e.g. a specific hotel).
           type: string
         scope:
           description: Select the notification scope.

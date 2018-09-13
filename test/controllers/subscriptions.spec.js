@@ -8,7 +8,8 @@ const Subscription = require('../../src/models/subscription');
 function _getSubscriptionData () {
   return {
     wtIndex: '0x7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b',
-    hotel: '0x6a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a',
+    resourceType: 'hotel',
+    resourceAddress: '0x6a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a',
     scope: {
       action: 'update',
       subjects: ['description', 'ratePlans'],
@@ -46,7 +47,8 @@ describe('controllers - subscription', function () {
               active: true,
               url: subscriptionData.url,
               wtIndex: subscriptionData.wtIndex,
-              hotel: subscriptionData.hotel,
+              resourceType: subscriptionData.resourceType,
+              resourceAddress: subscriptionData.resourceAddress,
               action: subscriptionData.scope.action,
               subjects: subscriptionData.scope.subjects,
             });
@@ -75,7 +77,8 @@ describe('controllers - subscription', function () {
               active: true,
               url: subscriptionData.url,
               wtIndex: subscriptionData.wtIndex,
-              hotel: subscriptionData.hotel,
+              resourceType: subscriptionData.resourceType,
+              resourceAddress: subscriptionData.resourceAddress,
             });
             done();
           } catch (err) {
@@ -119,9 +122,10 @@ describe('controllers - subscription', function () {
     // Define a dummy valid address.
     const wtIndex = '0x7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b';
 
-    it('should deactivate and existing subscription', (done) => {
+    it('should deactivate an existing subscription', (done) => {
       Subscription.create({
         wtIndex,
+        resourceType: 'hotel',
         url: 'http://example.com/callback',
       }).then((subscription) => {
         request(server)
@@ -150,6 +154,7 @@ describe('controllers - subscription', function () {
     it('should return 404 when the deleted subscription has already been deactivated', (done) => {
       Subscription.create({
         wtIndex,
+        resourceType: 'hotel',
         url: 'http://example.com/callback',
         active: false,
       }).then((subscription) => {

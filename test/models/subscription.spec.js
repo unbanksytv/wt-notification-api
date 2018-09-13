@@ -6,14 +6,16 @@ const { ValidationError } = require('../../src/validators');
 
 // Define some dummy valid addresses.
 const wtIndex = '0x7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b',
-  hotel = '0x6a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a';
+  resourceType = 'hotel',
+  resourceAddress = '0x6a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a';
 
 describe('models - subscription', () => {
   describe('create', () => {
     it('should create a new subscription and return its representation', async () => {
       const subscription = await Subscription.create({
         wtIndex,
-        hotel,
+        resourceType,
+        resourceAddress,
         action: 'create',
         subjects: ['description', 'ratePlans'],
         url: 'http://example.com/callback',
@@ -21,7 +23,8 @@ describe('models - subscription', () => {
       assert.property(subscription, 'id');
       assert.equal(subscription.id.length, 32);
       assert.property(subscription, 'wtIndex', wtIndex);
-      assert.property(subscription, 'hotel', hotel);
+      assert.property(subscription, 'resourceType', resourceType);
+      assert.property(subscription, 'resourceAddress', resourceAddress);
       assert.property(subscription, 'action', 'update');
       assert.property(subscription, 'url', 'http://example.com/callback');
       assert.property(subscription, 'subjects', ['description', 'ratePlans']);
@@ -31,10 +34,12 @@ describe('models - subscription', () => {
     it('should work without optional attributes', async () => {
       const subscription = await Subscription.create({
         wtIndex,
+        resourceType,
         url: 'http://example.com/callback',
       });
       assert.property(subscription, 'id');
       assert.property(subscription, 'wtIndex', wtIndex);
+      assert.property(subscription, 'resourceType', resourceType);
       assert.property(subscription, 'url', 'http://example.com/callback');
       assert.property(subscription, 'active', true);
       assert.equal(subscription.hotel, undefined);
@@ -42,10 +47,25 @@ describe('models - subscription', () => {
       assert.equal(subscription.subjects, undefined);
     });
 
+    it('should raise an error when resource type is unknown ', async () => {
+      try {
+        await Subscription.create({
+          wtIndex,
+          resourceType: 'train',
+          url: 'http://example.com/callback',
+        });
+        throw new Error('Should have raised an error.');
+      } catch (err) {
+        assert.instanceOf(err, ValidationError);
+        assert.match(err.message, /^Unknown resourceType/);
+      }
+    });
+
     it('should raise an error when action is unknown ', async () => {
       try {
         await Subscription.create({
           wtIndex,
+          resourceType,
           url: 'http://example.com/callback',
           action: 'hotelOuch',
         });
@@ -60,6 +80,7 @@ describe('models - subscription', () => {
       try {
         await Subscription.create({
           wtIndex,
+          resourceType,
           url: 'http://example.com/callback',
           action: 'update',
           subjects: ['dummy'],
@@ -75,6 +96,7 @@ describe('models - subscription', () => {
       try {
         await Subscription.create({
           wtIndex: 'dummy',
+          resourceType,
           url: 'http://example.com/callback',
         });
         throw new Error('Should have raised an error.');
@@ -88,7 +110,8 @@ describe('models - subscription', () => {
     it('should get a previously created subscription', async () => {
       const data = {
           wtIndex,
-          hotel,
+          resourceType,
+          resourceAddress,
           action: 'delete',
           subjects: ['ratePlans'],
           url: 'http://example.com/callback',
@@ -101,7 +124,8 @@ describe('models - subscription', () => {
     it('should normalize falsy values', async () => {
       const data = {
           wtIndex,
-          hotel: undefined,
+          resourceType,
+          resourceAddress: undefined,
           action: null,
           subjects: [],
           url: 'http://example.com/callback',
@@ -112,6 +136,7 @@ describe('models - subscription', () => {
       assert.deepEqual(subscription, {
         id,
         wtIndex,
+        resourceType,
         url: 'http://example.com/callback',
         active: false,
       });
@@ -127,6 +152,7 @@ describe('models - subscription', () => {
     it('should deactivate an existing Subscription', async () => {
       let subscription = await Subscription.create({
         wtIndex,
+        resourceType,
         url: 'http://example.com/callback',
       });
       assert.property(subscription, 'active', true);
@@ -138,6 +164,7 @@ describe('models - subscription', () => {
     it('should return boolean based on whether the deactivation was successful or not', async () => {
       const subscription = await Subscription.create({
         wtIndex,
+        resourceType,
         url: 'http://example.com/callback',
       });
       let deactivated = (await Subscription.deactivate(subscription.id));

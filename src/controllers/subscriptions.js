@@ -14,7 +14,8 @@ module.exports.create = async (req, res, next) => {
     // (Note: some validations are here as well.)
     let { id: subscriptionId } = await Subscription.create({
       wtIndex: req.body.wtIndex,
-      hotel: req.body.hotel,
+      resourceType: req.body.resourceType,
+      resourceAddress: req.body.resourceAddress,
       action: req.body.scope ? req.body.scope.action : null,
       subjects: req.body.scope ? req.body.scope.subjects : null,
       url: req.body.url,

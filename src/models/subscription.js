@@ -7,7 +7,10 @@ const { ValidationError } = require('../validators');
 const SUBSCRIPTIONS_TABLE = 'subscriptions';
 const SUBJECTS_TABLE = 'subjects';
 
-const ACTIONS = [
+const RESOURCE_TYPES = [
+    'hotel', // Eventually, airline-related resource types will probably be added.
+  ],
+  ACTIONS = [
     'create',
     'update',
     'delete',
@@ -26,7 +29,8 @@ module.exports.createTable = async function () {
   await db.schema.createTable(SUBSCRIPTIONS_TABLE, (table) => {
     table.string('id', ID_LENGTH).primary();
     table.string('wt_index', 63).notNullable();
-    table.string('hotel', 63);
+    table.string('resource_type', 63).notNullable();
+    table.string('resource_address', 63);
     table.string('action', 63);
     table.text('url').notNullable();
     table.boolean('active').notNullable().defaultTo(true);
@@ -62,7 +66,7 @@ async function _generateID () {
 function _normalize (data) {
   data = Object.assign({}, data);
   data.active = (data.active === undefined) ? true : Boolean(data.active);
-  for (let field of ['hotel', 'action', 'subjects']) {
+  for (let field of ['resourceAddress', 'action', 'subjects']) {
     if (([null, undefined, ''].indexOf(data[field]) !== -1) || (data[field].length === 0)) {
       delete data[field];
     }
@@ -81,11 +85,14 @@ function _validate (data) {
       }
     }
   }
+  if (data.resourceType && RESOURCE_TYPES.indexOf(data.resourceType) === -1) {
+    throw new ValidationError(`Unknown resourceType: ${data.resourceType}`);
+  }
   if (data.wtIndex && !web3.utils.isAddress(data.wtIndex)) {
     throw new ValidationError(`Invalid address: ${data.wtIndex}`);
   }
-  if (data.hotel && !web3.utils.isAddress(data.hotel)) {
-    throw new ValidationError(`Invalid address: ${data.hotel}`);
+  if (data.resourceAddress && !web3.utils.isAddress(data.resourceAddress)) {
+    throw new ValidationError(`Invalid address: ${data.resourceAddress}`);
   }
 }
 
@@ -117,7 +124,8 @@ module.exports.create = async function (subscriptionData) {
   await db(SUBSCRIPTIONS_TABLE).insert({
     'id': id,
     'wt_index': subscriptionData.wtIndex,
-    'hotel': subscriptionData.hotel,
+    'resource_type': subscriptionData.resourceType,
+    'resource_address': subscriptionData.resourceAddress,
     'action': subscriptionData.action,
     'url': subscriptionData.url,
     'active': subscriptionData.active,
@@ -135,7 +143,7 @@ module.exports.create = async function (subscriptionData) {
  * @return {Promise<Object>}
  */
 module.exports.get = async function (id) {
-  const subscription = (await db(SUBSCRIPTIONS_TABLE).select('id', 'wt_index', 'hotel', 'action', 'url', 'active').where({
+  const subscription = (await db(SUBSCRIPTIONS_TABLE).select('id', 'wt_index', 'resource_type', 'resource_address', 'action', 'url', 'active').where({
       'id': id,
     }))[0],
     subjects = (await db(SUBJECTS_TABLE).select('name').where({
@@ -144,7 +152,8 @@ module.exports.get = async function (id) {
   return subscription && _normalize({
     id: subscription.id,
     wtIndex: subscription.wt_index,
-    hotel: subscription.hotel,
+    resourceType: subscription.resource_type,
+    resourceAddress: subscription.resource_address,
     action: subscription.action,
     url: subscription.url,
     active: subscription.active,
