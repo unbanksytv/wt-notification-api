@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 const { assert } = require('chai');
 
+const { resetDB } = require('../../src/db');
 const Subscription = require('../../src/models/subscription');
 const { ValidationError } = require('../../src/services/validators');
 
@@ -173,6 +174,102 @@ describe('models - subscription', () => {
       assert.equal(deactivated, false); // Second deactivation did noting.
       deactivated = (await Subscription.deactivate('nonexistent'));
       assert.equal(deactivated, false);
+    });
+  });
+
+  describe('getURLs', () => {
+    const address1 = '0x6a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a',
+      address2 = '0x6b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b';
+
+    before(async () => {
+      await resetDB();
+      const base = { wtIndex, resourceType };
+      await Subscription.create(Object.assign({
+        resourceAddress: address1,
+        url: 'http://example1.com',
+      }, base));
+      await Subscription.create(Object.assign({
+        resourceAddress: address2,
+        url: 'http://example2.com',
+        action: 'create',
+      }, base));
+      await Subscription.create(Object.assign({ // Intentionally duplicate
+        resourceAddress: address2,
+        url: 'http://example2.com',
+        action: 'create',
+      }, base));
+      await Subscription.create(Object.assign({
+        resourceAddress: address2,
+        url: 'http://example3.com',
+        action: 'update',
+      }, base));
+      await Subscription.create(Object.assign({
+        resourceAddress: address2,
+        url: 'http://example4.com',
+        action: 'update',
+        subjects: ['ratePlans', 'description'],
+      }, base));
+      await Subscription.create(Object.assign({
+        resourceAddress: address2,
+        url: 'http://example5.com',
+        action: 'update',
+        subjects: ['availability'],
+      }, base));
+      await Subscription.create(Object.assign({
+        url: 'http://example6.com',
+      }, base));
+      await Subscription.create(Object.assign({
+        action: 'update',
+        url: 'http://example7.com',
+      }, base));
+      await Subscription.create(Object.assign({
+        action: 'delete',
+        url: 'http://example8.com',
+      }, base));
+    });
+
+    it('should return a list of unique URLs based on the given criteria', async () => {
+      const urls = await Subscription.getURLs({
+        wtIndex,
+        resourceType,
+        resourceAddress: address2,
+        action: 'update',
+        subjects: ['ratePlans'],
+      });
+      assert.deepEqual(urls, ['http://example3.com', 'http://example4.com',
+        'http://example6.com', 'http://example7.com']);
+    });
+
+    it('should work with multiple subjects', async () => {
+      const urls = await Subscription.getURLs({
+        wtIndex,
+        resourceType,
+        resourceAddress: address2,
+        action: 'update',
+        subjects: ['ratePlans', 'availability'],
+      });
+      assert.deepEqual(urls, ['http://example3.com', 'http://example4.com',
+        'http://example5.com', 'http://example6.com', 'http://example7.com']);
+    });
+
+    it('should work without subject', async () => {
+      const urls = await Subscription.getURLs({
+        wtIndex,
+        resourceType,
+        resourceAddress: address2,
+        action: 'delete',
+      });
+      assert.deepEqual(urls, ['http://example6.com', 'http://example8.com']);
+    });
+
+    it('should filter out duplicities', async () => {
+      const urls = await Subscription.getURLs({
+        wtIndex,
+        resourceType,
+        resourceAddress: address2,
+        action: 'create',
+      });
+      assert.deepEqual(urls, ['http://example2.com', 'http://example6.com']);
     });
   });
 });

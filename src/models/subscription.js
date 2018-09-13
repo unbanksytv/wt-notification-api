@@ -142,14 +142,14 @@ module.exports.create = async function (subscriptionData) {
  * @return {Promise<Object>}
  */
 module.exports.get = async function (id) {
-  const subscription = (await db(SUBSCRIPTIONS_TABLE).select('id', 'wt_index', 'resource_type', 'resource_address', 'action', 'url', 'active').where({
+  const subscription = (await db(SUBSCRIPTIONS_TABLE).where({
       'id': id,
-    }))[0],
+    }).select('wt_index', 'resource_type', 'resource_address', 'action', 'url', 'active'))[0],
     subjects = (await db(SUBJECTS_TABLE).select('name').where({
       'subscription_id': id,
     })).map((x) => x.name);
   return subscription && _normalize({
-    id: subscription.id,
+    id: id,
     wtIndex: subscription.wt_index,
     resourceType: subscription.resource_type,
     resourceAddress: subscription.resource_address,
@@ -171,4 +171,63 @@ module.exports.deactivate = async function (id) {
     'active': false,
     'updated_at': db.fn.now(),
   }));
+};
+
+/**
+ * Get a list of URLs of subscriptions corresponding to the
+ * given notification attributes.
+ *
+ * @param {Object} notificationData
+ *
+ *
+ * Notification attributes are:
+ *
+ *  - wtIndex
+ *  - resourceType
+ *  - resourceAddress
+ *  - action
+ *  - [optional] subjects
+ *
+ * A matching subscription is such that it either:
+ *
+ * - has the specified value of the given property
+ *
+ *   or
+ *
+ * - does not have the property defined at all
+ *
+ * When subjects are defined, a subscription is matched when the
+ * intersection of the sets of subjects has at least one item.
+ *
+ * @return {Promise<String[]>}
+ */
+module.exports.getURLs = async function (notificationData) {
+  for (let field of ['wtIndex', 'resourceType', 'resourceAddress', 'action']) {
+    if (!notificationData[field]) {
+      throw new Error(`getURLs - Missing ${field}`);
+    }
+  }
+  let table = db(SUBSCRIPTIONS_TABLE).distinct('url');
+  if (notificationData.subjects) {
+    table = table.leftOuterJoin(SUBJECTS_TABLE, `${SUBSCRIPTIONS_TABLE}.id`, '=',
+      `${SUBJECTS_TABLE}.subscription_id`);
+  }
+  let query = table.where({
+    'wt_index': notificationData.wtIndex,
+    'resource_type': notificationData.resourceType,
+  }).andWhere(function () {
+    this.where('resource_address', notificationData.resourceAddress)
+      .orWhere('resource_address', null);
+  }).andWhere(function () {
+    this.where('action', notificationData.action)
+      .orWhere('action', null);
+  });
+
+  if (notificationData.subjects) {
+    query = query.andWhere(function () {
+      this.whereIn('name', notificationData.subjects).orWhere('name', null);
+    });
+  }
+
+  return query.select('url').map((x) => x.url);
 };
