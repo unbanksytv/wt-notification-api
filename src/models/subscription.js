@@ -19,7 +19,6 @@ const RESOURCE_TYPES = [
     'ratePlans',
     'availability',
     'description',
-    'notifications',
     'dataIndex',
     'onChain',
   ],

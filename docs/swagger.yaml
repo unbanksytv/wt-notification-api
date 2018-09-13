@@ -114,7 +114,6 @@ components:
           - ratePlans
           - availability
           - description
-          - notifications
           - dataIndex
           - onChain
     CreatedScope:
