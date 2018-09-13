@@ -5,7 +5,7 @@ const request = require('supertest');
 
 const Queue = require('../../src/services/queue');
 
-function _getPublishData () {
+function _getNotificationData () {
   return {
     wtIndex: '0x7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b',
     resourceType: 'hotel',
@@ -17,7 +17,7 @@ function _getPublishData () {
   };
 }
 
-describe('controllers - publish', function () {
+describe('controllers - notifications', function () {
   const queue = Queue.get();
   let server;
 
@@ -31,13 +31,13 @@ describe('controllers - publish', function () {
     queue.enqueue.restore();
   });
 
-  describe('POST /publish', () => {
+  describe('POST /notifications', () => {
     it('should accept the notification and enqueue it for broadcast', (done) => {
-      const notification = _getPublishData();
+      const notification = _getNotificationData();
       queue.enqueue.resetHistory();
       assert.equal(queue.enqueue.callCount, 0);
       request(server)
-        .post('/publish')
+        .post('/notifications')
         .send(notification)
         .expect(204)
         .end(async (err, res) => {
@@ -59,30 +59,30 @@ describe('controllers - publish', function () {
     });
 
     it('should return 422 if a required attribute is missing', (done) => {
-      const notification = _getPublishData();
+      const notification = _getNotificationData();
       delete notification.resourceAddress;
       request(server)
-        .post('/publish')
+        .post('/notifications')
         .send(notification)
         .expect(422)
         .end(done);
     });
 
     it('should return 422 if an invalid address is specified', (done) => {
-      const notification = _getPublishData();
+      const notification = _getNotificationData();
       notification.resourceAddresss = 'dummy';
       request(server)
-        .post('/publish')
+        .post('/notifications')
         .send(notification)
         .expect(422)
         .end(done);
     });
 
     it('should return 422 if an invalid enum value is specified', (done) => {
-      const notification = _getPublishData();
+      const notification = _getNotificationData();
       notification.action = 'dummy';
       request(server)
-        .post('/publish')
+        .post('/notifications')
         .send(notification)
         .expect(422)
         .end(done);

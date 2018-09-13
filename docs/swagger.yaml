@@ -30,7 +30,7 @@ paths:
                   config:
                     type: string
                     description: Which config is the API using.
-  /publish:
+  /notifications:
     post:
       summary: Publish an update notification.
       requestBody:
