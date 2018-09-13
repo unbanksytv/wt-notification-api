@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const web3 = require('web3');
 
 const { db } = require('../config');
-const { ValidationError } = require('../validators');
+const { ValidationError } = require('../services/validators');
 
 const SUBSCRIPTIONS_TABLE = 'subscriptions';
 const SUBJECTS_TABLE = 'subjects';

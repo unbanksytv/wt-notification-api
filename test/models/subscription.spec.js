@@ -2,7 +2,7 @@
 const { assert } = require('chai');
 
 const Subscription = require('../../src/models/subscription');
-const { ValidationError } = require('../../src/validators');
+const { ValidationError } = require('../../src/services/validators');
 
 // Define some dummy valid addresses.
 const wtIndex = '0x7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b',

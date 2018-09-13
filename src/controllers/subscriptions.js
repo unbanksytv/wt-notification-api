@@ -1,7 +1,7 @@
 const Subscription = require('../models/subscription');
 const { HttpValidationError, Http404Error } = require('../errors');
 
-const validators = require('../validators');
+const validators = require('../services/validators');
 
 /**
  * Create a new subscription.
