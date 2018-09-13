@@ -69,7 +69,8 @@
   "required": [
     "wtIndex",
     "resourceType",
-    "url"
+    "resourceAddress",
+    "scope"
   ],
   "properties": {
     "wtIndex": {
@@ -93,11 +94,7 @@
         { "$ref": "#/definitions/CreatedScope" },
         { "$ref": "#/definitions/UpdatedScope" },
         { "$ref": "#/definitions/DeletedScope" }
-       ]
-    },
-    "url": {
-      "description": "URL of the endpoint notifications will be relayed to.",
-      "type": "string"
+      ]
     }
   }
 }

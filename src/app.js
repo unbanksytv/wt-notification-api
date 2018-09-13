@@ -11,6 +11,7 @@ const config = require('./config');
 const { version } = require('../package.json');
 const { HttpError, HttpInternalError, Http404Error, HttpBadRequestError } = require('./errors');
 const subscriptions = require('./controllers/subscriptions');
+const { publish } = require('./controllers/publish');
 
 const app = express();
 
@@ -54,6 +55,9 @@ app.get('/', (req, res) => {
 // Subscriptions
 app.post('/subscriptions', subscriptions.create);
 app.delete('/subscriptions/:id', subscriptions.deactivate);
+
+// Publication
+app.post('/publish', publish);
 
 // 404 handler
 app.use('*', (req, res, next) => {
