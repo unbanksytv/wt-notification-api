@@ -2,11 +2,11 @@ const Promise = require('bluebird');
 const request = require('request-promise-native');
 
 const config = require('../config');
-const { Subscription } = require('../models/subscription');
+const Subscription = require('../models/subscription');
 
-async function _sendNotification (notification, url) {
+async function _sendNotification (requestLib, notification, url) {
   try {
-    await request({
+    await requestLib({
       method: 'POST',
       uri: url,
       headers: {
@@ -21,12 +21,14 @@ async function _sendNotification (notification, url) {
 
 const CONCURRENCY = 8;
 
-module.exports.process = async function (notification) {
+module.exports.process = async function (notification, requestLib) {
+  requestLib = requestLib || request; // Allow injection from the outside for test purposes.
   const urls = await Subscription.getURLs(notification);
-  return Promise.map(urls, (url) => _sendNotification(notification, url), CONCURRENCY)
+  return Promise.map(urls, (url) => {
+    return _sendNotification(requestLib, notification, url);
+  }, { concurrency: CONCURRENCY }).catch((err) => {
     // Catch rejections to prevent the whole node process from
     // crashing.
-    .catch((err) => {
-      config.logger.error(err.stack);
-    });
+    config.logger.error(err.stack);
+  });
 };
