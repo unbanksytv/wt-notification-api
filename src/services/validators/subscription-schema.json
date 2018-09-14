@@ -97,7 +97,8 @@
     },
     "url": {
       "description": "URL of the endpoint notifications will be relayed to.",
-      "type": "string"
+      "type": "string",
+      "format": "url"
     }
   }
 }

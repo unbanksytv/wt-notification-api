@@ -116,6 +116,16 @@ describe('controllers - subscription', function () {
         .expect(422)
         .end(done);
     });
+
+    it('should return 422 when the URL is invalid', (done) => {
+      const subscriptionData = _getSubscriptionData();
+      subscriptionData.url = '123456';
+      request(server)
+        .post('/subscriptions')
+        .send(subscriptionData)
+        .expect(422)
+        .end(done);
+    });
   });
 
   describe('DELETE /subscriptions/:id', () => {

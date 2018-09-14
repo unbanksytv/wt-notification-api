@@ -1,7 +1,10 @@
 const tv4 = require('tv4');
+const tv4Formats = require('tv4-formats');
 
 const subscriptionSchema = require('./subscription-schema.json');
 const publicationSchema = require('./publication-schema.json');
+
+tv4.addFormat(tv4Formats); // We use the "url" format.
 
 class ValidationError extends Error {};
 module.exports.ValidationError = ValidationError;
