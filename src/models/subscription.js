@@ -175,8 +175,8 @@ module.exports.deactivate = async function (id) {
 
 /**
  * Get a set of URLs together with the respective
- * subscription IDs of subscriptions corresponding to the
- * given notification attributes.
+ * subscription IDs of active subscriptions corresponding
+ * to the given notification attributes.
  *
  * @param {Object} notification
  *
@@ -215,6 +215,7 @@ module.exports.getURLs = async function (notification) {
   let query = table.where({
     'wt_index': notification.wtIndex,
     'resource_type': notification.resourceType,
+    'active': true,
   }).andWhere(function () {
     this.where('resource_address', notification.resourceAddress)
       .orWhere('resource_address', null);

@@ -181,7 +181,7 @@ describe('models - subscription', () => {
   describe('getURLs', () => {
     const address1 = '0x6a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a',
       address2 = '0x6b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b';
-    let s1, s2, s3, s4, s5, s6, s7, s8, s9;
+    let s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
     before(async () => {
       await resetDB();
@@ -227,6 +227,11 @@ describe('models - subscription', () => {
       s9 = await Subscription.create(Object.assign({
         action: 'delete',
         url: 'http://example8.com',
+      }, base));
+      s10 = await Subscription.create(Object.assign({
+        action: 'create',
+        url: 'http://example9.com',
+        active: false,
       }, base));
     });
 
