@@ -38,7 +38,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Update'
+              $ref: '#/components/schemas/Notification'
       responses:
         '204':
           description: Notification has been accepted and processed.
@@ -150,7 +150,7 @@ components:
           description: A list of updated resouce properties.
           oneOf:
             - $ref: '#/components/schemas/HotelSubjects'
-    Update:
+    Notification:
       type: object
       description: A single update notification.
       required:
