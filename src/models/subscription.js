@@ -177,7 +177,7 @@ module.exports.deactivate = async function (id) {
  * Get a list of URLs of subscriptions corresponding to the
  * given notification attributes.
  *
- * @param {Object} notificationData
+ * @param {Object} notification
  *
  *
  * Notification attributes are:
@@ -201,31 +201,31 @@ module.exports.deactivate = async function (id) {
  *
  * @return {Promise<String[]>}
  */
-module.exports.getURLs = async function (notificationData) {
+module.exports.getURLs = async function (notification) {
   for (let field of ['wtIndex', 'resourceType', 'resourceAddress', 'action']) {
-    if (!notificationData[field]) {
+    if (!notification[field]) {
       throw new Error(`getURLs - Missing ${field}`);
     }
   }
   let table = db(SUBSCRIPTIONS_TABLE).distinct('url');
-  if (notificationData.subjects) {
+  if (notification.subjects) {
     table = table.leftOuterJoin(SUBJECTS_TABLE, `${SUBSCRIPTIONS_TABLE}.id`, '=',
       `${SUBJECTS_TABLE}.subscription_id`);
   }
   let query = table.where({
-    'wt_index': notificationData.wtIndex,
-    'resource_type': notificationData.resourceType,
+    'wt_index': notification.wtIndex,
+    'resource_type': notification.resourceType,
   }).andWhere(function () {
-    this.where('resource_address', notificationData.resourceAddress)
+    this.where('resource_address', notification.resourceAddress)
       .orWhere('resource_address', null);
   }).andWhere(function () {
-    this.where('action', notificationData.action)
+    this.where('action', notification.action)
       .orWhere('action', null);
   });
 
-  if (notificationData.subjects) {
+  if (notification.subjects) {
     query = query.andWhere(function () {
-      this.whereIn('name', notificationData.subjects).orWhere('name', null);
+      this.whereIn('name', notification.subjects).orWhere('name', null);
     });
   }
 

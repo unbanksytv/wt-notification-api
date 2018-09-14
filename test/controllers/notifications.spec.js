@@ -23,7 +23,7 @@ describe('controllers - notifications', function () {
 
   before(async () => {
     server = require('../../src/index');
-    sinon.spy(queue, 'enqueue');
+    sinon.stub(queue, 'enqueue');
   });
 
   after(() => {

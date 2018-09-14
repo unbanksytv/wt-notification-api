@@ -1,3 +1,5 @@
+const worker = require('./worker');
+
 /*
  * A queue to decouple API server from the outgoing requests
  * done by `workers`.
@@ -8,7 +10,9 @@
  */
 class Queue {
   enqueue (notification) {
-    // TODO: relay the notification to workers
+    // The processing is not awaited to simulate the behavior of
+    // a "proper" queue and not delay the caller.
+    worker.process(notification);
   }
 }
 
