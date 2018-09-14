@@ -174,11 +174,11 @@ module.exports.deactivate = async function (id) {
 };
 
 /**
- * Get a list of URLs of subscriptions corresponding to the
+ * Get a set of URLs together with the respective
+ * subscription IDs of subscriptions corresponding to the
  * given notification attributes.
  *
  * @param {Object} notification
- *
  *
  * Notification attributes are:
  *
@@ -199,7 +199,7 @@ module.exports.deactivate = async function (id) {
  * When subjects are defined, a subscription is matched when the
  * intersection of the sets of subjects has at least one item.
  *
- * @return {Promise<String[]>}
+ * @return {Promise<Object>}
  */
 module.exports.getURLs = async function (notification) {
   for (let field of ['wtIndex', 'resourceType', 'resourceAddress', 'action']) {
@@ -207,7 +207,7 @@ module.exports.getURLs = async function (notification) {
       throw new Error(`getURLs - Missing ${field}`);
     }
   }
-  let table = db(SUBSCRIPTIONS_TABLE).distinct('url');
+  let table = db(SUBSCRIPTIONS_TABLE);
   if (notification.subjects) {
     table = table.leftOuterJoin(SUBJECTS_TABLE, `${SUBSCRIPTIONS_TABLE}.id`, '=',
       `${SUBJECTS_TABLE}.subscription_id`);
@@ -229,5 +229,11 @@ module.exports.getURLs = async function (notification) {
     });
   }
 
-  return query.select('url').map((x) => x.url);
+  const subscriptions = await query.select(`${SUBSCRIPTIONS_TABLE}.id`, 'url'),
+    urls = {};
+  for (let subscription of subscriptions) {
+    urls[subscription.url] = urls[subscription.url] || [];
+    urls[subscription.url].push(subscription.id);
+  }
+  return urls;
 };

@@ -29,7 +29,10 @@ describe('services - worker', () => {
       url: 'http://example3.com',
       action: 'create',
     }, base));
-    requestMock = sinon.stub().callsFake(() => Promise.resolve());
+    requestMock = sinon.stub().callsFake(() => Promise.resolve({
+      status: 200,
+      body: 'notification accepted',
+    }));
   });
 
   describe('process', () => {

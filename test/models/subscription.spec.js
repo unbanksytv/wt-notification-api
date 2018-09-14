@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint-disable no-unused-vars */
 const { assert } = require('chai');
 
 const { resetDB } = require('../../src/db');
@@ -180,55 +181,56 @@ describe('models - subscription', () => {
   describe('getURLs', () => {
     const address1 = '0x6a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a',
       address2 = '0x6b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b';
+    let s1, s2, s3, s4, s5, s6, s7, s8, s9;
 
     before(async () => {
       await resetDB();
       const base = { wtIndex, resourceType };
-      await Subscription.create(Object.assign({
+      s1 = await Subscription.create(Object.assign({
         resourceAddress: address1,
         url: 'http://example1.com',
       }, base));
-      await Subscription.create(Object.assign({
+      s2 = await Subscription.create(Object.assign({
         resourceAddress: address2,
         url: 'http://example2.com',
         action: 'create',
       }, base));
-      await Subscription.create(Object.assign({ // Intentionally duplicate
+      s3 = await Subscription.create(Object.assign({ // Intentionally duplicate
         resourceAddress: address2,
         url: 'http://example2.com',
         action: 'create',
       }, base));
-      await Subscription.create(Object.assign({
+      s4 = await Subscription.create(Object.assign({
         resourceAddress: address2,
         url: 'http://example3.com',
         action: 'update',
       }, base));
-      await Subscription.create(Object.assign({
+      s5 = await Subscription.create(Object.assign({
         resourceAddress: address2,
         url: 'http://example4.com',
         action: 'update',
         subjects: ['ratePlans', 'description'],
       }, base));
-      await Subscription.create(Object.assign({
+      s6 = await Subscription.create(Object.assign({
         resourceAddress: address2,
         url: 'http://example5.com',
         action: 'update',
         subjects: ['availability'],
       }, base));
-      await Subscription.create(Object.assign({
+      s7 = await Subscription.create(Object.assign({
         url: 'http://example6.com',
       }, base));
-      await Subscription.create(Object.assign({
+      s8 = await Subscription.create(Object.assign({
         action: 'update',
         url: 'http://example7.com',
       }, base));
-      await Subscription.create(Object.assign({
+      s9 = await Subscription.create(Object.assign({
         action: 'delete',
         url: 'http://example8.com',
       }, base));
     });
 
-    it('should return a list of unique URLs based on the given criteria', async () => {
+    it('should return the set URLs with corresponding IDs based on the given criteria', async () => {
       const urls = await Subscription.getURLs({
         wtIndex,
         resourceType,
@@ -236,8 +238,12 @@ describe('models - subscription', () => {
         action: 'update',
         subjects: ['ratePlans'],
       });
-      assert.deepEqual(urls, ['http://example3.com', 'http://example4.com',
-        'http://example6.com', 'http://example7.com']);
+      assert.deepEqual(urls, {
+        'http://example3.com': [s4.id],
+        'http://example4.com': [s5.id],
+        'http://example6.com': [s7.id],
+        'http://example7.com': [s8.id],
+      });
     });
 
     it('should work with multiple subjects', async () => {
@@ -248,8 +254,13 @@ describe('models - subscription', () => {
         action: 'update',
         subjects: ['ratePlans', 'availability'],
       });
-      assert.deepEqual(urls, ['http://example3.com', 'http://example4.com',
-        'http://example5.com', 'http://example6.com', 'http://example7.com']);
+      assert.deepEqual(urls, {
+        'http://example3.com': [s4.id],
+        'http://example4.com': [s5.id],
+        'http://example5.com': [s6.id],
+        'http://example6.com': [s7.id],
+        'http://example7.com': [s8.id],
+      });
     });
 
     it('should work without subject', async () => {
@@ -259,17 +270,23 @@ describe('models - subscription', () => {
         resourceAddress: address2,
         action: 'delete',
       });
-      assert.deepEqual(urls, ['http://example6.com', 'http://example8.com']);
+      assert.deepEqual(urls, {
+        'http://example6.com': [s7.id],
+        'http://example8.com': [s9.id],
+      });
     });
 
-    it('should filter out duplicities', async () => {
+    it('should return all IDs belonging to a given URL', async () => {
       const urls = await Subscription.getURLs({
         wtIndex,
         resourceType,
         resourceAddress: address2,
         action: 'create',
       });
-      assert.deepEqual(urls, ['http://example2.com', 'http://example6.com']);
+      assert.deepEqual(urls, {
+        'http://example2.com': [s2.id, s3.id],
+        'http://example6.com': [s7.id],
+      });
     });
   });
 });
