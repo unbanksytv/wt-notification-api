@@ -9,10 +9,13 @@ const worker = require('../../src/services/worker');
 // Define some dummy valid addresses.
 const wtIndex = '0x7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b',
   resourceType = 'hotel',
-  resourceAddress = '0x6a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a';
+  resourceAddress = '0x6a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a',
+  resourceAddress2 = '0x8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c';
 
 describe('services - worker', () => {
-  let requestMock;
+  let requestMock,
+    toDeactivateId;
+
   before(async () => {
     await resetDB();
     const base = { wtIndex, resourceType };
@@ -29,8 +32,13 @@ describe('services - worker', () => {
       url: 'http://example3.com',
       action: 'create',
     }, base));
-    requestMock = sinon.stub().callsFake(() => Promise.resolve({
-      status: 200,
+    toDeactivateId = (await Subscription.create(Object.assign({
+      resourceAddress: resourceAddress2,
+      url: 'http://example4.com',
+      action: 'create',
+    }, base))).id;
+    requestMock = sinon.stub().callsFake((opts) => Promise.resolve({
+      status: (opts.uri === 'http://example4.com') ? 404 : 200,
       body: 'notification accepted',
     }));
   });
@@ -48,6 +56,18 @@ describe('services - worker', () => {
       const urls = requestMock.args.map((x) => x[0].uri);
       assert.deepEqual(urls, ['http://example1.com', 'http://example2.com', 'http://example3.com']);
       assert.equal(requestMock.args[0][0].body, JSON.stringify(notification));
+    });
+
+    it('should deactivate subscriptions when the endpoint does not respond with `accepted`', async () => {
+      const notification = {
+        wtIndex,
+        resourceType,
+        resourceAddress: resourceAddress2,
+        action: 'create',
+      };
+      await worker.process(notification, requestMock);
+      const sub = await Subscription.get(toDeactivateId);
+      assert.equal(sub.active, false);
     });
   });
 });

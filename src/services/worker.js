@@ -9,9 +9,9 @@ const Subscription = require('../models/subscription');
  * false otherwise.
  *
  **/
+const ACCEPTED_MSG = 'notification accepted';
 function _requestAccepted (response) {
-  const acceptedMsg = 'notification accepted';
-  return (response.status === 200) && (response.body.toLower().trim() === acceptedMsg);
+  return (response.status === 200) && (response.body.toLowerCase().trim() === ACCEPTED_MSG);
 }
 
 /*
@@ -20,8 +20,9 @@ function _requestAccepted (response) {
  *
  **/
 async function _send (requestLib, notification, url) {
+  let response;
   try {
-    const response = await requestLib({
+    response = await requestLib({
       method: 'POST',
       uri: url,
       headers: {
@@ -29,12 +30,10 @@ async function _send (requestLib, notification, url) {
       },
       body: JSON.stringify(notification),
     });
-    return _requestAccepted(response);
   } catch (err) {
-    // TODO: What about network errors that aren't the
-    // subscriber's fault?
     return false;
   }
+  return _requestAccepted(response);
 }
 
 const CONCURRENCY = 16;
