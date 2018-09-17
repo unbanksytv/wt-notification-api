@@ -120,7 +120,6 @@ describe('models - subscription', () => {
         assert.match(err.message, /^Unknown resourceType/);
       }
     });
-
   });
 
   describe('get', () => {
