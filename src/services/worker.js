@@ -11,7 +11,7 @@ const Subscription = require('../models/subscription');
  **/
 const ACCEPTED_MSG = 'notification accepted';
 function _requestAccepted (response) {
-  return (response.status === 200) && (response.body.toLowerCase().trim() === ACCEPTED_MSG);
+  return (response.statusCode === 200) && (response.body.toLowerCase().trim() === ACCEPTED_MSG);
 }
 
 /*
@@ -29,6 +29,7 @@ async function _send (requestLib, notification, url) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(notification),
+      resolveWithFullResponse: true
     });
   } catch (err) {
     return false;
@@ -45,6 +46,7 @@ module.exports.process = async function (notification, requestLib) {
     const accepted = await _send(requestLib, notification, url);
     if (!accepted) {
       for (let id of urls[url]) {
+        config.logger.info(`Deactivating subscription: ${id}`);
         // Deactivate subscription when not able to fulfill it.
         await Subscription.deactivate(id);
       }

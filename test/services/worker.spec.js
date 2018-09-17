@@ -38,7 +38,7 @@ describe('services - worker', () => {
       action: 'create',
     }, base))).id;
     requestMock = sinon.stub().callsFake((opts) => Promise.resolve({
-      status: (opts.uri === 'http://example4.com') ? 404 : 200,
+      statusCode: (opts.uri === 'http://example4.com') ? 404 : 200,
       body: 'notification accepted',
     }));
   });
