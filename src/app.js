@@ -56,7 +56,7 @@ app.get('/', (req, res) => {
 app.post('/subscriptions', subscriptions.create);
 app.delete('/subscriptions/:id', subscriptions.deactivate);
 
-// Publication
+// Notifications
 app.post('/notifications', notifications.publish);
 
 // 404 handler
