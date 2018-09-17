@@ -73,7 +73,15 @@ function _normalize (data) {
   return data;
 }
 
+const FIELDS = ['wtIndex', 'resourceType', 'resourceAddress', 'action',
+  'subjects', 'url', 'active'];
 function _validate (data) {
+  for (let key of Object.keys(data)) {
+    if (FIELDS.indexOf(key) === -1) {
+      throw new ValidationError(`Unknown property: ${key}`);
+    }
+  }
+
   if (data.action && ACTIONS.indexOf(data.action) === -1) {
     throw new ValidationError(`Unknown action: ${data.action}`);
   }

@@ -94,11 +94,11 @@ describe('models - subscription', () => {
       }
     });
 
-    it('should raise an error upon an invalid ethereum address', async () => {
+    it('should raise an error when an attribute is unknown', async () => {
       try {
-        await Subscription.create({
-          wtIndex: 'dummy',
-          resourceType,
+        const subscription = await Subscription.create({
+          wtIndex,
+          resourceTypeWhatever: resourceType,
           url: 'http://example.com/callback',
         });
         throw new Error('Should have raised an error.');
@@ -106,6 +106,21 @@ describe('models - subscription', () => {
         assert.instanceOf(err, ValidationError);
       }
     });
+
+    it('should raise an error when resource type is unknown ', async () => {
+      try {
+        await Subscription.create({
+          wtIndex,
+          resourceType: 'train',
+          url: 'http://example.com/callback',
+        });
+        throw new Error('Should have raised an error.');
+      } catch (err) {
+        assert.instanceOf(err, ValidationError);
+        assert.match(err.message, /^Unknown resourceType/);
+      }
+    });
+
   });
 
   describe('get', () => {
