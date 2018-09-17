@@ -75,7 +75,8 @@
   "properties": {
     "wtIndex": {
       "description": "Helps to uniquely identify the resource in question.",
-      "type": "string"
+      "type": "string",
+      "format": "eth-address"
     },
     "resourceType": {
       "description": "Specifies the type of resource (hotel, ...) to be followed. (We assume multiple resource types will exist in the future.)",
@@ -86,7 +87,8 @@
     },
     "resourceAddress": {
       "description": "Limit subscription to a specific resource (e.g. a specific hotel).",
-      "type": "string"
+      "type": "string",
+      "format": "eth-address"
     },
     "scope": {
       "description": "Select the notification scope.",

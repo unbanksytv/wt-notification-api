@@ -70,7 +70,7 @@ describe('controllers - notifications', function () {
 
     it('should return 422 if an invalid address is specified', (done) => {
       const notification = _getNotificationData();
-      notification.resourceAddresss = 'dummy';
+      notification.resourceAddress = 'dummy';
       request(server)
         .post('/notifications')
         .send(notification)
