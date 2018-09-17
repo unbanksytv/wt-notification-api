@@ -1,27 +1,9 @@
 const crypto = require('crypto');
-const web3 = require('web3');
 
 const { db } = require('../config');
-const { ValidationError } = require('../services/validators');
 
-const SUBSCRIPTIONS_TABLE = 'subscriptions';
-const SUBJECTS_TABLE = 'subjects';
-
-const RESOURCE_TYPES = [
-    'hotel', // Eventually, airline-related resource types will probably be added.
-  ],
-  ACTIONS = [
-    'create',
-    'update',
-    'delete',
-  ],
-  SUBJECTS = [
-    'ratePlans',
-    'availability',
-    'description',
-    'dataIndex',
-    'onChain',
-  ],
+const SUBSCRIPTIONS_TABLE = 'subscriptions',
+  SUBJECTS_TABLE = 'subjects',
   ID_LENGTH = 32;
 
 module.exports.createTable = async function () {
@@ -73,36 +55,6 @@ function _normalize (data) {
   return data;
 }
 
-const FIELDS = ['wtIndex', 'resourceType', 'resourceAddress', 'action',
-  'subjects', 'url', 'active'];
-function _validate (data) {
-  for (let key of Object.keys(data)) {
-    if (FIELDS.indexOf(key) === -1) {
-      throw new ValidationError(`Unknown property: ${key}`);
-    }
-  }
-
-  if (data.action && ACTIONS.indexOf(data.action) === -1) {
-    throw new ValidationError(`Unknown action: ${data.action}`);
-  }
-  if (data.subjects) {
-    for (let subject of data.subjects) {
-      if (SUBJECTS.indexOf(subject) === -1) {
-        throw new ValidationError(`Unknown subject: ${subject}`);
-      }
-    }
-  }
-  if (data.resourceType && RESOURCE_TYPES.indexOf(data.resourceType) === -1) {
-    throw new ValidationError(`Unknown resourceType: ${data.resourceType}`);
-  }
-  if (data.wtIndex && !web3.utils.isAddress(data.wtIndex)) {
-    throw new ValidationError(`Invalid address: ${data.wtIndex}`);
-  }
-  if (data.resourceAddress && !web3.utils.isAddress(data.resourceAddress)) {
-    throw new ValidationError(`Invalid address: ${data.resourceAddress}`);
-  }
-}
-
 /**
  * Create a new subject-subscription binding.
  *
@@ -126,7 +78,6 @@ async function addSubject (name, subscriptionId) {
  */
 module.exports.create = async function (subscriptionData) {
   subscriptionData = _normalize(subscriptionData);
-  _validate(subscriptionData);
   const id = await _generateID();
   await db(SUBSCRIPTIONS_TABLE).insert({
     'id': id,

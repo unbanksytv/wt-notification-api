@@ -1,5 +1,6 @@
 const tv4 = require('tv4');
 const validator = require('validator');
+const web3 = require('web3');
 
 const subscriptionSchema = require('./subscription-schema.json');
 const publicationSchema = require('./publication-schema.json');
@@ -9,6 +10,13 @@ tv4.addFormat('url', (data) => {
     return null;
   }
   return 'Not a valid URL.';
+});
+
+tv4.addFormat('eth-address', (data) => {
+  if (web3.utils.isAddress(data)) {
+    return null;
+  }
+  return 'Invalid ethereum address.';
 });
 
 class ValidationError extends Error {};

@@ -117,6 +117,26 @@ describe('controllers - subscription', function () {
         .end(done);
     });
 
+    it('should return 422 when an unknown resourceType is specified', (done) => {
+      const subscriptionData = _getSubscriptionData();
+      subscriptionData.resourceType = 'dummy';
+      request(server)
+        .post('/subscriptions')
+        .send(subscriptionData)
+        .expect(422)
+        .end(done);
+    });
+
+    it('should return 422 when an unknown property is supplied', (done) => {
+      const subscriptionData = _getSubscriptionData();
+      subscriptionData.whatever = 'dummy';
+      request(server)
+        .post('/subscriptions')
+        .send(subscriptionData)
+        .expect(422)
+        .end(done);
+    });
+
     it('should return 422 when the URL is invalid', (done) => {
       const subscriptionData = _getSubscriptionData();
       subscriptionData.url = '123456';
@@ -130,6 +150,16 @@ describe('controllers - subscription', function () {
     it('should return 422 when the protocol is missing from the URL', (done) => {
       const subscriptionData = _getSubscriptionData();
       subscriptionData.url = 'example.com';
+      request(server)
+        .post('/subscriptions')
+        .send(subscriptionData)
+        .expect(422)
+        .end(done);
+    });
+
+    it('should return 422 when an invalid ethereum address is supplied', (done) => {
+      const subscriptionData = _getSubscriptionData();
+      subscriptionData.resourceAddress = '123456';
       request(server)
         .post('/subscriptions')
         .send(subscriptionData)
