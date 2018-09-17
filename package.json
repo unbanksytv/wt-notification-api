@@ -9,6 +9,7 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "start": "node src/index.js",
     "dev": "WT_CONFIG=dev node src/index.js",
+    "dev-consumer": "node test/utils/consumer.js",
     "createdb-dev": "WT_CONFIG=dev node management/createdb.js",
     "createdb": "node management/createdb.js"
   },
