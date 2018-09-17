@@ -2,8 +2,8 @@ const tv4 = require('tv4');
 const validator = require('validator');
 const web3 = require('web3');
 
-const subscriptionSchema = require('./subscription-schema.json');
-const publicationSchema = require('./notification-schema.json');
+const subscriptionSchema = require('./subscription-schema.js');
+const publicationSchema = require('./notification-schema.js');
 
 tv4.addFormat('url', (data) => {
   if (validator.isURL(data, { 'require_protocol': true })) {
