@@ -126,6 +126,16 @@ describe('controllers - subscription', function () {
         .expect(422)
         .end(done);
     });
+
+    it('should return 422 when the protocol is missing from the URL', (done) => {
+      const subscriptionData = _getSubscriptionData();
+      subscriptionData.url = 'example.com';
+      request(server)
+        .post('/subscriptions')
+        .send(subscriptionData)
+        .expect(422)
+        .end(done);
+    });
   });
 
   describe('DELETE /subscriptions/:id', () => {

@@ -29,7 +29,7 @@ async function _send (requestLib, notification, url) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(notification),
-      resolveWithFullResponse: true
+      resolveWithFullResponse: true,
     });
   } catch (err) {
     return false;

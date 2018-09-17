@@ -1,10 +1,15 @@
 const tv4 = require('tv4');
-const tv4Formats = require('tv4-formats');
+const validator = require('validator');
 
 const subscriptionSchema = require('./subscription-schema.json');
 const publicationSchema = require('./publication-schema.json');
 
-tv4.addFormat(tv4Formats); // We use the "url" format.
+tv4.addFormat('url', (data) => {
+  if (validator.isURL(data, { 'require_protocol': true })) {
+    return null;
+  }
+  return 'Not a valid URL.';
+});
 
 class ValidationError extends Error {};
 module.exports.ValidationError = ValidationError;
