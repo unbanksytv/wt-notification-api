@@ -1,17 +1,19 @@
 # WT Updates API
 
-API written in node.js to facilitate publish / subscribe mechanism within the
-WT platform.
+API written in node.js to facilitate publish / subscribe
+communication within the WT platform.
 
 ## Purpose
 
-We expect that some of the data available through the WT platform will be very
-short-lived in nature. That includes hotel availability data but it might also
-include other information, such as price data. The crucial question is: how can
-a WT data consumer keep track of all the changes without resorting to polling
-all resources all the time?
+We expect that some of the data that is available through the WT
+platform will be very short-lived in nature. This includes hotel
+availability data but it might also include other information,
+such as price data. The crucial question is: how can a WT data
+consumer keep track of all the changes without resorting to
+polling all resources all the time?
 
-The solution lies in a publish / subscribe mechanism that works as follows:
+The solution lies in a publish / subscribe mechanism that works
+as follows:
 
 1. There is an API specification for update publication
    / subscription together with a reference implementation.
@@ -24,12 +26,12 @@ The solution lies in a publish / subscribe mechanism that works as follows:
 3. Data consumers can subscribe to update notifications and
    receive them via webhooks.
 
-This repository contains both the API specification (in `docs/swagger.yml`) as
-well as a reference implementation.
+This solution is decentralized in nature as it allows multiple
+independent publish / subscribe channel providers to coexist and
+be easily discovered via the WT index.
 
-This solution is decentralized in nature as it allows multiple independent
-publish / subscribe channel providers to coexist and be easily discovered via
-the WT index.
+This repository contains both the API specification (in
+`docs/swagger.yml`) as well as the reference implementation.
 
 ## How to run this API server
 
@@ -84,21 +86,21 @@ notifications.
 
 When sending an update notification, you should specify:
 
-- WT Index address the update pertains to
+- WT Index address the update pertains to.
 - Type of WT resource (currently, "hotel" is the only allowed
-  value, but we expect this to be extended in the near future)
-- WT Resource address (e.g. hotel address)
-- Scope (what has changed)
+  value, but we expect this to be extended in the near future).
+- WT Resource address (e.g. hotel address).
+- Scope (what has changed).
 
 The purpose of `scope` is twofold:
 
-1. To allow consumers to subscribe to a subset of changes only
+1. Allow consumers to subscribe only to a subset of updates
    (e.g. updates of prices).
-2. To enable consumers to find out what remote resource needs
-   to be fetched again. For this reason, the `onChain` and
-   `dataIndex` subjects are present - without `dataIndex` being
-   changed, the consumer knows the same URL reference might be
-   reused to download the newest data upon repeated updates.
+2. Enable consumers to keep track of which remote resources can
+   be kept in local cache. For example, if updates keep coming
+   without the `dataIndex` subject, the consumer knows the old
+   URL of, say, ratePlans is still valid and can be simply
+   fetched again to get the newest data.
 
 ### Example
 
@@ -143,7 +145,13 @@ $ curl -X POST localhost:8080/subscriptions -H 'Content-Type: application/json' 
 {"subscriptionId": "63ccc93d66321f37a7203a26567fd1b0"}
 ```
 
-When you want to cancel the subscription, you have two
+`resourceAddress` as well as `scope` are optional. If you do not
+specify them, all notifications that fulfill the remaining
+criteria will be broadcast to you.
+
+### Cancelling a subscription
+
+When you want to cancel a subscription, you have two
 possibilities:
 
 1. Stop sending the `notification accepted` response from the
