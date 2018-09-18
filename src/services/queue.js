@@ -4,9 +4,9 @@ const worker = require('./worker');
  * A queue to decouple API server from the outgoing requests
  * done by `workers`.
  *
- * Currently, we utilize node's internal queue. It is possible
- * that this will be replaced by a proper standalone message
- * queue in the future.
+ * Currently, we utilize the internal queue of node.js. It is
+ * possible that this will be replaced by a proper standalone
+ * message queue in the future.
  */
 class Queue {
   enqueue (notification) {

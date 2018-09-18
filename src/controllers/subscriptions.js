@@ -11,7 +11,6 @@ module.exports.create = async (req, res, next) => {
     // 1. Validate request payload.
     validators.validateSubscriptionRequest(req.body);
     // 2. Save the new subscription.
-    // (Note: some validations are here as well.)
     let { id: subscriptionId } = await Subscription.create({
       wtIndex: req.body.wtIndex,
       resourceType: req.body.resourceType,

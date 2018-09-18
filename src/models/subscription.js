@@ -98,7 +98,7 @@ module.exports.create = async function (subscriptionData) {
 /**
  * Get a subscription by its ID.
  *
- * @param {Number} ID
+ * @param {String} ID
  * @return {Promise<Object>}
  */
 module.exports.get = async function (id) {
@@ -124,7 +124,7 @@ module.exports.get = async function (id) {
  * Deactivate a subscription.
  *
  * @param {String} subscriptionId
- * @return {Promise<boolean>}
+ * @return {Promise<Boolean>}
  */
 module.exports.deactivate = async function (id) {
   return Boolean(await db(SUBSCRIPTIONS_TABLE).where('id', id).andWhere('active', true).update({
