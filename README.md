@@ -151,7 +151,7 @@ criteria will be broadcast to you.
 
 ### Cancelling a subscription
 
-When you want to cancel a subscription, you have two
+If you want to cancel a subscription, you have two
 possibilities:
 
 1. Stop sending the `notification accepted` response from the
