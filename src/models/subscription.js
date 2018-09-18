@@ -62,12 +62,13 @@ function _normalize (data) {
  * @param {String} subscriptionid
  * @return {Promise<Object>}
  */
-async function addSubject (name, subscriptionId) {
-  await db(SUBJECTS_TABLE).insert({
-    'name': name,
-    'subscription_id': subscriptionId,
-  });
-  return { name, subscriptionId };
+async function addSubjects (names, subscriptionId) {
+  if (names.length !== 0) {
+    await db(SUBJECTS_TABLE).insert(names.map((name) => {
+      return { name, 'subscription_id': subscriptionId };
+    }));
+  }
+  return { names, subscriptionId };
 };
 
 /**
@@ -88,8 +89,8 @@ module.exports.create = async function (subscriptionData) {
     'url': subscriptionData.url,
     'active': subscriptionData.active,
   });
-  for (let subject of (subscriptionData.subjects || [])) {
-    await addSubject(subject, id);
+  if (subscriptionData.subjects) {
+    await addSubjects(subscriptionData.subjects, id);
   }
   return Object.assign({ id }, subscriptionData);
 };
