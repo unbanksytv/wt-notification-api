@@ -48,7 +48,6 @@ app.get('/', (req, res) => {
     info: 'https://github.com/windingtree/wt-write-api/blob/master/README.md',
     version,
     config: process.env.WT_CONFIG,
-    wtIndexAddress: config.wtIndexAddress,
   });
 });
 
