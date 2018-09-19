@@ -53,6 +53,7 @@ app.get('/', (req, res) => {
 
 // Subscriptions
 app.post('/subscriptions', subscriptions.create);
+app.get('/subscriptions/:id', subscriptions.get);
 app.delete('/subscriptions/:id', subscriptions.deactivate);
 
 // Notifications

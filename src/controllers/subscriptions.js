@@ -40,3 +40,36 @@ module.exports.deactivate = async (req, res, next) => {
     next(new Http404Error('notFound', `No active subscription with ID ${req.params.id} found.`));
   }
 };
+
+/**
+ * Get an existing description.
+ */
+module.exports.get = async (req, res, next) => {
+  try {
+    const sub = await Subscription.get(req.params.id);
+    if (!sub) {
+      throw new Http404Error('notFound', `No subscription with ID ${req.params.id} found.`);
+    }
+    const data = {
+      id: sub.id,
+      wtIndex: sub.wtIndex,
+      resourceType: sub.resourceType,
+      url: sub.url,
+      active: sub.active,
+    };
+    if (sub.resourceAddress) {
+      data.resourceAddress = sub.resourceAddress;
+    }
+    if (sub.action) {
+      data.scope = {
+        action: sub.action,
+      };
+      if (sub.subjects && sub.subjects.length > 0) {
+        data.scope.subjects = sub.subjects;
+      }
+    }
+    res.status(200).json(data);
+  } catch (err) {
+    next(err);
+  }
+};

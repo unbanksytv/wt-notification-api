@@ -215,4 +215,35 @@ describe('controllers - subscription', function () {
       }).catch(done);
     });
   });
+
+  describe('GET /subscriptions/:id', () => {
+    it('should return an existing subscription', (done) => {
+      const subscriptionData = _getSubscriptionData();
+      delete subscriptionData.scope;
+      Subscription.create(subscriptionData).then((sub) => {
+        request(server)
+          .get(`/subscriptions/${sub.id}`)
+          .expect(200)
+          .expect('content-type', /application\/json/)
+          .end(async (err, res) => {
+            if (err) return done(err);
+            try {
+              assert.deepEqual(res.body, Object.assign({
+                id: sub.id, active: true,
+              }, subscriptionData));
+              done();
+            } catch (err) {
+              done(err);
+            }
+          });
+      }).catch(done);
+    });
+
+    it('should return 404 when the subscription does not exist', (done) => {
+      request(server)
+        .get('/subscriptions/dummy')
+        .expect(404)
+        .end(done);
+    });
+  });
 });

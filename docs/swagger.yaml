@@ -78,6 +78,26 @@ paths:
         description: Subscription ID as returned by POST /subscriptions
         schema:
           type: string
+    get:
+      summary: Get data of an existing subscription.
+      responses:
+        '200':
+          description: 'Subscription data.'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Subscription'
+                  - type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Subscription ID.
+                      active:
+                        type: boolean
+                        description: Subscription status.
+        '404':
+          $ref: '#/components/responses/NotFoundError'
     delete:
       summary: Cancel subscription.
       responses:

@@ -166,3 +166,29 @@ possibilities:
 ```sh
 $ curl -X DELETE localhost:8080/subscriptions/63ccc93d66321f37a7203a26567fd1b0
 ```
+
+### Validating subscription status
+
+Sometimes you might need to validate what the status of your
+subscription is, for instance when you are not sure whether the
+subscription has been cancelled according to rule 1 in the
+previous section or not. This is how you can retrieve the data
+related to your subscription:
+
+```sh
+$ curl localhost:8080/subscriptions/63ccc93d66321f37a7203a26567fd1b0 | python -m json.tool
+# JSON representation of the subscription will be returned:
+{
+    "id": "63ccc93d66321f37a7203a26567fd1b0",
+    "active": true,
+    "wtIndex": "0x3b476ac17ffea8dcf2dbd5ef787a5baeeebe9984",
+    "resourceType": "hotel",
+    "scope": {
+        "action": "update",
+        "subjects": ["dataIndex", "ratePlans"]
+    },
+    "url": "https://my-server.example.com/wt-callbacks/"
+}
+```
+
+Note the `active` attribute denoting the subscription status.
