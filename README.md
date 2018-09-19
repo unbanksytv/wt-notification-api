@@ -151,6 +151,11 @@ $ curl -X POST localhost:8080/subscriptions -H 'Content-Type: application/json' 
 specify them, all notifications that fulfill the remaining
 criteria will be broadcast to you.
 
+If possible, consider using unique webhook URLs for individual
+subscriptions to make eventual cancelling of selected
+subscriptions easier in case you lose / do not store
+subscription IDs (see the next section for more information).
+
 ### Cancelling a subscription
 
 If you want to cancel a subscription, you have two
