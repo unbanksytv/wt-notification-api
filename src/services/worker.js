@@ -15,6 +15,28 @@ function _requestAccepted (response) {
 }
 
 /*
+ * Encode notification so that it is broadcast in the original
+ * format.
+ *
+ **/
+function _encode (notification) {
+  const data = {
+    wtIndex: notification.wtIndex,
+    resourceType: notification.resourceType,
+    resourceAddress: notification.resourceAddress,
+  };
+  if (notification.action) {
+    data.scope = {
+      action: notification.action,
+    };
+    if (notification.subjects) {
+      data.scope.subjects = notification.subjects;
+    }
+  }
+  return JSON.stringify(data);
+}
+
+/*
  * Sends the notification and returns a flag based on whether it
  * has been accepted or not.
  *
@@ -28,7 +50,7 @@ async function _send (requestLib, notification, url) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(notification),
+      body: _encode(notification),
       resolveWithFullResponse: true,
     });
   } catch (err) {

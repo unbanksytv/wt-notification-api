@@ -122,9 +122,11 @@ $ curl -X POST localhost:8080/notifications -H 'Content-Type: application/json' 
 If you want to consume notifications, you need to prepare
 a publicly accessible http(s) endpoint where you can accept the
 notifications. The notifications will come as json-encoded data
-via POST HTTP requests. Make sure the endpoint responds to
-notifications with HTTP status 200 and the response body is the
-text `notification accepted`.
+via POST HTTP requests. Notification data will be unchanged
+(i.e. what the publisher sends will be broadcast to consumers.)
+Make sure the endpoint responds to notifications with HTTP
+status 200 and the response body is the text `notification
+accepted`.
 
 Once you have this endpoint ready, you can subscribe for
 notifications of interest:

@@ -55,7 +55,14 @@ describe('services - worker', () => {
       assert.equal(requestMock.callCount, 3);
       const urls = requestMock.args.map((x) => x[0].uri);
       assert.deepEqual(urls, ['http://example1.com', 'http://example2.com', 'http://example3.com']);
-      assert.equal(requestMock.args[0][0].body, JSON.stringify(notification));
+      assert.equal(requestMock.args[0][0].body, JSON.stringify({
+        wtIndex,
+        resourceType,
+        resourceAddress,
+        scope: {
+          action: 'create',
+        },
+      }));
     });
 
     it('should deactivate subscriptions when the endpoint does not respond with `accepted`', async () => {
