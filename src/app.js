@@ -10,6 +10,7 @@ const YAML = require('yamljs');
 const config = require('./config');
 const { version } = require('../package.json');
 const { HttpError, HttpInternalError, Http404Error, HttpBadRequestError } = require('./errors');
+const middleware = require('./middleware');
 const subscriptions = require('./controllers/subscriptions');
 const notifications = require('./controllers/notifications');
 
@@ -52,7 +53,10 @@ app.get('/', (req, res) => {
 });
 
 // Subscriptions
-app.post('/subscriptions', subscriptions.create);
+app.post('/subscriptions', middleware.throttle({
+  rate: 1000,
+  window: 60 * 1000 * 20, // 20 minutes
+}), subscriptions.create);
 app.get('/subscriptions/:id', subscriptions.get);
 app.delete('/subscriptions/:id', subscriptions.deactivate);
 

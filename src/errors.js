@@ -35,6 +35,12 @@ HttpValidationError.status = 422;
 HttpValidationError.defaultCode = 'validationFailed';
 HttpValidationError.defaultMsgShort = 'Validation did not pass.';
 
+class HttpTooManyRequestsError extends HttpError {};
+HttpTooManyRequestsError.status = 429;
+HttpTooManyRequestsError.defaultCode = 'tooManyRequests';
+HttpTooManyRequestsError.defaultMsgShort = 'Too many requests.';
+HttpTooManyRequestsError.defaultMsgLong = 'Please, try to wait for some time before sending more requests.';
+
 class HttpInternalError extends HttpError {};
 HttpInternalError.status = 500;
 HttpInternalError.defaultCode = 'genericError';
@@ -46,5 +52,6 @@ module.exports = {
   Http404Error,
   HttpBadRequestError,
   HttpValidationError,
+  HttpTooManyRequestsError,
   HttpInternalError,
 };
