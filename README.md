@@ -1,4 +1,4 @@
-# WT Updates API
+# WT Update API
 
 API written in node.js to facilitate publish / subscribe
 communication within the WT platform.
@@ -41,7 +41,7 @@ This repository contains both the API specification (in
 ### Getting stared
 In order to install and run tests, we must:
 ```
-git clone git@github.com:windingtree/wt-updates-api.git
+git clone git@github.com:windingtree/wt-update-api.git
 nvm install
 npm install
 npm test

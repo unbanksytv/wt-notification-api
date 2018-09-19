@@ -5,7 +5,7 @@ servers:
 info:
   description: API for distribution of update notifications by means of publish / subscribe.
   version: 0.1.0
-  title: WT updates API
+  title: WT update API
 paths:
   /:
     get:
