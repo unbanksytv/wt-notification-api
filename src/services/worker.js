@@ -60,28 +60,48 @@ async function _send (requestLib, notification, url) {
 }
 
 const CONCURRENCY = 16,
-  SUBSCRIPTION_PAGE_SIZE = 256;
+  SUBSCRIPTION_PAGE_SIZE = 64;
+
+/**
+ * Merge two sets of URLs as returned from Subscription.getURLs.
+ */
+function _mergeUrls (urls1, urls2) {
+  const ret = {};
+  for (let obj of [urls1, urls2]) {
+    for (let url in obj) {
+      ret[url] = (ret[url] || []).concat(obj[url]);
+    }
+  }
+  return ret;
+}
 
 module.exports.process = async function (notification, requestLib) {
   requestLib = requestLib || request; // Allow injection from the outside for test purposes.
-  let next;
+  let next,
+    urls = {};
   do { // Process subscriptions page by page.
-    let urls = await Subscription.getURLs(notification, SUBSCRIPTION_PAGE_SIZE, next);
-    next = urls.next;
-    urls = urls.urls;
-    await Promise.map(Object.keys(urls), async (url) => {
-      const accepted = await _send(requestLib, notification, url);
-      if (!accepted) {
-        for (let id of urls[url]) {
-          config.logger.info(`Deactivating subscription: ${id}`);
-          // Deactivate subscription when not able to fulfill it.
-          await Subscription.deactivate(id);
+    let urlsPage = await Subscription.getURLs(notification, SUBSCRIPTION_PAGE_SIZE, next);
+    next = urlsPage.next;
+    urls = _mergeUrls(urls, urlsPage.urls);
+    if (!next || !urls[next.url]) {
+      // When we're sure the next page does not contain the same
+      // URL we already have, process the current urls.
+      await Promise.map(Object.keys(urls), async (url) => {
+        const accepted = await _send(requestLib, notification, url);
+        if (!accepted) {
+          for (let id of urls[url]) {
+            config.logger.info(`Deactivating subscription: ${id}`);
+            // Deactivate subscription when not able to fulfill it.
+            await Subscription.deactivate(id);
+          }
         }
-      }
-    }, { concurrency: CONCURRENCY }).catch((err) => {
-      // Catch rejections to prevent the whole node process from
-      // crashing.
-      config.logger.error(err.stack);
-    });
+      }, { concurrency: CONCURRENCY }).catch((err) => {
+        // Catch rejections to prevent the whole node process from
+        // crashing.
+        config.logger.error(err.stack);
+      });
+      // Start afresh with the next page.
+      urls = {};
+    }
   } while (next);
 };
