@@ -46,6 +46,8 @@ paths:
           $ref: '#/components/responses/BadRequestError'
         '422':
           $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
   /subscriptions:
     post:
       summary: Create a subscription to get notifications.
@@ -70,6 +72,8 @@ paths:
           $ref: '#/components/responses/BadRequestError'
         '422':
           $ref: '#/components/responses/UnprocessableEntityError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
   '/subscriptions/{subscriptionId}':
     parameters:
       - name: subscriptionId
@@ -121,6 +125,12 @@ components:
             $ref: '#/components/schemas/Error'
     UnprocessableEntityError:
       description: Request body or params validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequestsError:
+      description: Too many requests have been sent in a short time span.
       content:
         application/json:
           schema:
