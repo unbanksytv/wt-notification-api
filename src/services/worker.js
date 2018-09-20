@@ -64,7 +64,7 @@ const CONCURRENCY = 16,
 
 module.exports.process = async function (notification, requestLib) {
   requestLib = requestLib || request; // Allow injection from the outside for test purposes.
-  let next = undefined;
+  let next;
   do { // Process subscriptions page by page.
     let urls = await Subscription.getURLs(notification, SUBSCRIPTION_PAGE_SIZE, next);
     next = urls.next;

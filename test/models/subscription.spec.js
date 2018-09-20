@@ -185,12 +185,15 @@ describe('models - subscription', () => {
         action: 'update',
         subjects: ['ratePlans'],
       });
-      assert.deepEqual(urls, { urls: {
-        'http://example3.com': [s4.id],
-        'http://example4.com': [s5.id],
-        'http://example6.com': [s7.id],
-        'http://example7.com': [s8.id],
-      }, next: null });
+      assert.deepEqual(urls, {
+        urls: {
+          'http://example3.com': [s4.id],
+          'http://example4.com': [s5.id],
+          'http://example6.com': [s7.id],
+          'http://example7.com': [s8.id],
+        },
+        next: null,
+      });
     });
 
     it('should work with multiple subjects', async () => {
@@ -201,13 +204,16 @@ describe('models - subscription', () => {
         action: 'update',
         subjects: ['ratePlans', 'availability'],
       });
-      assert.deepEqual(urls, { urls: {
-        'http://example3.com': [s4.id],
-        'http://example4.com': [s5.id],
-        'http://example5.com': [s6.id],
-        'http://example6.com': [s7.id],
-        'http://example7.com': [s8.id],
-      }, next: null });
+      assert.deepEqual(urls, {
+        urls: {
+          'http://example3.com': [s4.id],
+          'http://example4.com': [s5.id],
+          'http://example5.com': [s6.id],
+          'http://example6.com': [s7.id],
+          'http://example7.com': [s8.id],
+        },
+        next: null,
+      });
     });
 
     it('should work without subject', async () => {
@@ -217,10 +223,13 @@ describe('models - subscription', () => {
         resourceAddress: address2,
         action: 'delete',
       });
-      assert.deepEqual(urls, { urls: {
-        'http://example6.com': [s7.id],
-        'http://example8.com': [s9.id],
-      }, next: null });
+      assert.deepEqual(urls, {
+        urls: {
+          'http://example6.com': [s7.id],
+          'http://example8.com': [s9.id],
+        },
+        next: null,
+      });
     });
 
     it('should return all IDs belonging to a given URL', async () => {
@@ -230,10 +239,13 @@ describe('models - subscription', () => {
         resourceAddress: address2,
         action: 'create',
       });
-      assert.deepEqual(urls, { urls: {
-        'http://example2.com': [s2.id, s3.id].sort(),
-        'http://example6.com': [s7.id],
-      }, next: null });
+      assert.deepEqual(urls, {
+        urls: {
+          'http://example2.com': [s2.id, s3.id].sort(),
+          'http://example6.com': [s7.id],
+        },
+        next: null,
+      });
     });
 
     it('should limit the number of returned objects, if requested', async () => {
@@ -244,11 +256,14 @@ describe('models - subscription', () => {
         action: 'update',
         subjects: ['ratePlans'],
       }, 3);
-      assert.deepEqual(urls, { urls: {
-        'http://example3.com': [s4.id],
-        'http://example4.com': [s5.id],
-        'http://example6.com': [s7.id],
-      }, next: { url: 'http://example7.com', id: s8.id }});
+      assert.deepEqual(urls, {
+        urls: {
+          'http://example3.com': [s4.id],
+          'http://example4.com': [s5.id],
+          'http://example6.com': [s7.id],
+        },
+        next: { url: 'http://example7.com', id: s8.id },
+      });
     });
 
     it('should start from the specified offset, if any', async () => {
@@ -259,10 +274,13 @@ describe('models - subscription', () => {
         action: 'update',
         subjects: ['ratePlans'],
       }, 3, { url: 'http://example6.com', id: s7.id });
-      assert.deepEqual(urls, { urls: {
-        'http://example6.com': [s7.id],
-        'http://example7.com': [s8.id],
-      }, next: null });
+      assert.deepEqual(urls, {
+        urls: {
+          'http://example6.com': [s7.id],
+          'http://example7.com': [s8.id],
+        },
+        next: null,
+      });
     });
   });
 });
