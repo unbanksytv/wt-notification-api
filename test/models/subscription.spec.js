@@ -235,5 +235,34 @@ describe('models - subscription', () => {
         'http://example6.com': [s7.id],
       });
     });
+
+    it('should limit the number of returned objects, if requested', async () => {
+      const urls = await Subscription.getURLs({
+        wtIndex,
+        resourceType,
+        resourceAddress: address2,
+        action: 'update',
+        subjects: ['ratePlans'],
+      }, 3);
+      assert.deepEqual(urls, {
+        'http://example3.com': [s4.id],
+        'http://example4.com': [s5.id],
+        'http://example6.com': [s7.id],
+      });
+    });
+
+    it('should start from the specified offset, if any', async () => {
+      const urls = await Subscription.getURLs({
+        wtIndex,
+        resourceType,
+        resourceAddress: address2,
+        action: 'update',
+        subjects: ['ratePlans'],
+      }, 3, { url: 'http://example6.com', id: s7.id });
+      assert.deepEqual(urls, {
+        'http://example6.com': [s7.id],
+        'http://example7.com': [s8.id],
+      });
+    });
   });
 });

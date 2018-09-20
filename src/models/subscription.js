@@ -162,9 +162,12 @@ module.exports.deactivate = async function (id) {
  * When subjects are defined, a subscription is matched when the
  * intersection of the sets of subjects has at least one item.
  *
+ * @param {Object} notification
+ * @param {Object} offset
+ * @param {Number} limit
  * @return {Promise<Object>}
  */
-module.exports.getURLs = async function (notification) {
+module.exports.getURLs = async function (notification, limit, offset) {
   for (let field of ['wtIndex', 'resourceType', 'resourceAddress', 'action']) {
     if (!notification[field]) {
       throw new Error(`getURLs - Missing ${field}`);
@@ -187,13 +190,30 @@ module.exports.getURLs = async function (notification) {
       .orWhere('action', null);
   });
 
+  if (offset) {
+    query = query.andWhere(function () {
+      this.where('url', '>', offset.url).orWhere(function () {
+        this.where('url', offset.url).andWhere(`${SUBSCRIPTIONS_TABLE}.id`, '>=', offset.id);
+      });
+    });
+  }
+
   if (notification.subjects) {
     query = query.andWhere(function () {
       this.whereIn('name', notification.subjects).orWhere('name', null);
     });
   }
 
-  const subscriptions = await query.select(`${SUBSCRIPTIONS_TABLE}.id`, 'url'),
+  query = query
+    .select(`${SUBSCRIPTIONS_TABLE}.id`, 'url')
+    .orderBy('url')
+    .orderBy(`${SUBSCRIPTIONS_TABLE}.id`);
+
+  if (limit) {
+    query = query.limit(limit);
+  }
+
+  const subscriptions = await query,
     urls = {};
   for (let subscription of subscriptions) {
     urls[subscription.url] = urls[subscription.url] || [];
