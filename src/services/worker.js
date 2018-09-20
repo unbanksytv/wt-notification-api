@@ -59,25 +59,29 @@ async function _send (requestLib, notification, url) {
   return _requestAccepted(response);
 }
 
-const CONCURRENCY = 16;
+const CONCURRENCY = 16,
+  SUBSCRIPTION_PAGE_SIZE = 256;
 
 module.exports.process = async function (notification, requestLib) {
   requestLib = requestLib || request; // Allow injection from the outside for test purposes.
-  // TODO: Implement some kind of pagination here to avoid
-  // retrieving too much data from the DB at once.
-  const urls = await Subscription.getURLs(notification);
-  return Promise.map(Object.keys(urls.urls), async (url) => {
-    const accepted = await _send(requestLib, notification, url);
-    if (!accepted) {
-      for (let id of urls.urls[url]) {
-        config.logger.info(`Deactivating subscription: ${id}`);
-        // Deactivate subscription when not able to fulfill it.
-        await Subscription.deactivate(id);
+  let next = undefined;
+  do { // Process subscriptions page by page.
+    let urls = await Subscription.getURLs(notification, SUBSCRIPTION_PAGE_SIZE, next);
+    next = urls.next;
+    urls = urls.urls;
+    await Promise.map(Object.keys(urls), async (url) => {
+      const accepted = await _send(requestLib, notification, url);
+      if (!accepted) {
+        for (let id of urls[url]) {
+          config.logger.info(`Deactivating subscription: ${id}`);
+          // Deactivate subscription when not able to fulfill it.
+          await Subscription.deactivate(id);
+        }
       }
-    }
-  }, { concurrency: CONCURRENCY }).catch((err) => {
-    // Catch rejections to prevent the whole node process from
-    // crashing.
-    config.logger.error(err.stack);
-  });
+    }, { concurrency: CONCURRENCY }).catch((err) => {
+      // Catch rejections to prevent the whole node process from
+      // crashing.
+      config.logger.error(err.stack);
+    });
+  } while (next);
 };
