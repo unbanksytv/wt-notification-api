@@ -66,10 +66,10 @@ module.exports.process = async function (notification, requestLib) {
   // TODO: Implement some kind of pagination here to avoid
   // retrieving too much data from the DB at once.
   const urls = await Subscription.getURLs(notification);
-  return Promise.map(Object.keys(urls), async (url) => {
+  return Promise.map(Object.keys(urls.urls), async (url) => {
     const accepted = await _send(requestLib, notification, url);
     if (!accepted) {
-      for (let id of urls[url]) {
+      for (let id of urls.urls[url]) {
         config.logger.info(`Deactivating subscription: ${id}`);
         // Deactivate subscription when not able to fulfill it.
         await Subscription.deactivate(id);

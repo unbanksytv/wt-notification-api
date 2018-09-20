@@ -210,14 +210,25 @@ module.exports.getURLs = async function (notification, limit, offset) {
     .orderBy(`${SUBSCRIPTIONS_TABLE}.id`);
 
   if (limit) {
-    query = query.limit(limit);
+    query = query.limit(limit + 1);
   }
 
   const subscriptions = await query,
     urls = {};
+
+  let next = null;
+  if (limit && subscriptions.length > limit) {
+    const last = subscriptions[subscriptions.length - 1];
+    next = { url: last.url, id: last.id };
+    subscriptions.splice(-1, 1);
+  }
+
   for (let subscription of subscriptions) {
     urls[subscription.url] = urls[subscription.url] || [];
     urls[subscription.url].push(subscription.id);
   }
-  return urls;
+  return {
+    urls: urls,
+    next: next,
+  };
 };
