@@ -16,6 +16,9 @@ module.exports.createTable = async function () {
     table.text('url').notNullable();
     table.boolean('active').notNullable().defaultTo(true);
     table.timestamps(true, true);
+
+    // Add an index for easier retrieval of subscriptions.
+    table.index(['wt_index', 'resource_type', 'active', 'resource_address', 'action']);
   });
 
   await db.schema.createTable(SUBJECTS_TABLE, (table) => {

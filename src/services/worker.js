@@ -63,6 +63,8 @@ const CONCURRENCY = 16;
 
 module.exports.process = async function (notification, requestLib) {
   requestLib = requestLib || request; // Allow injection from the outside for test purposes.
+  // TODO: Implement some kind of pagination here to avoid
+  // retrieving too much data from the DB at once.
   const urls = await Subscription.getURLs(notification);
   return Promise.map(Object.keys(urls), async (url) => {
     const accepted = await _send(requestLib, notification, url);
