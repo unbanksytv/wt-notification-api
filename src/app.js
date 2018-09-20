@@ -61,7 +61,11 @@ app.get('/subscriptions/:id', subscriptions.get);
 app.delete('/subscriptions/:id', subscriptions.deactivate);
 
 // Notifications
-app.post('/notifications', notifications.publish);
+app.post('/notifications', notifications.validate, middleware.throttle({
+  rate: 100,
+  window: 60 * 1000, // 100 updates per minute per hotel
+  getId: (req) => `${req.body.wtIndex}:${req.body.resourceAddress}:${req.path}`,
+}), notifications.publish);
 
 // 404 handler
 app.use('*', (req, res, next) => {
