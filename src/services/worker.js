@@ -75,12 +75,14 @@ function _mergeUrls (urls1, urls2) {
   return ret;
 }
 
-module.exports.process = async function (notification, requestLib) {
-  requestLib = requestLib || request; // Allow injection from the outside for test purposes.
+module.exports.process = async function (notification, requestLib, pageSize) {
+  // Allow injection from the outside for test purposes.
+  requestLib = requestLib || request;
+  pageSize = pageSize || SUBSCRIPTION_PAGE_SIZE;
   let next,
     urls = {};
   do { // Process subscriptions page by page.
-    let urlsPage = await Subscription.getURLs(notification, SUBSCRIPTION_PAGE_SIZE, next);
+    let urlsPage = await Subscription.getURLs(notification, pageSize, next);
     next = urlsPage.next;
     urls = _mergeUrls(urls, urlsPage.urls);
     if (!next || !urls[next.url]) {

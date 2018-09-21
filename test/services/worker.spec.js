@@ -18,11 +18,17 @@ describe('services - worker', () => {
 
   before(async () => {
     await resetDB();
+    sinon.spy(Subscription, 'getURLs');
     const base = { wtIndex, resourceType };
     await Subscription.create(Object.assign({
       url: 'http://example1.com',
     }, base));
     await Subscription.create(Object.assign({
+      resourceAddress,
+      url: 'http://example2.com',
+      action: 'create',
+    }, base));
+    await Subscription.create(Object.assign({ // Intentionally duplicate.
       resourceAddress,
       url: 'http://example2.com',
       action: 'create',
@@ -43,6 +49,15 @@ describe('services - worker', () => {
     }));
   });
 
+  after(() => {
+    Subscription.getURLs.restore();
+  });
+
+  beforeEach(() => {
+    requestMock.resetHistory();
+    Subscription.getURLs.resetHistory();
+  });
+
   describe('process', () => {
     it('should send the notification to all appropriate urls', async () => {
       const notification = {
@@ -52,6 +67,7 @@ describe('services - worker', () => {
         action: 'create',
       };
       await worker.process(notification, requestMock);
+      assert.equal(Subscription.getURLs.callCount, 1);
       assert.equal(requestMock.callCount, 3);
       const urls = requestMock.args.map((x) => x[0].uri);
       assert.deepEqual(urls, ['http://example1.com', 'http://example2.com', 'http://example3.com']);
@@ -75,6 +91,18 @@ describe('services - worker', () => {
       await worker.process(notification, requestMock);
       const sub = await Subscription.get(toDeactivateId);
       assert.equal(sub.active, false);
+    });
+
+    it('should retrieve subscriptions page by page', async () => {
+      const notification = {
+        wtIndex,
+        resourceType,
+        resourceAddress: resourceAddress,
+        action: 'create',
+      };
+      await worker.process(notification, requestMock, 2);
+      assert.equal(Subscription.getURLs.callCount, 2); // 4 (items) / 2 (page size) = 2
+      assert.equal(requestMock.callCount, 3);
     });
   });
 });
