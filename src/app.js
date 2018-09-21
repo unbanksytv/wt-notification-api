@@ -46,7 +46,7 @@ app.use(morgan(':remote-addr :remote-user [:date[clf]] :method :url HTTP/:http-v
 app.get('/', (req, res) => {
   res.status(200).json({
     docs: `${config.baseUrl}/docs/`,
-    info: 'https://github.com/windingtree/wt-write-api/blob/master/README.md',
+    info: 'https://github.com/windingtree/wt-update-api/blob/master/README.md',
     version,
     config: process.env.WT_CONFIG,
   });
