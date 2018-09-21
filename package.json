@@ -11,7 +11,9 @@
     "dev": "WT_CONFIG=dev node src/index.js",
     "dev-consumer": "node management/dev-consumer.js",
     "createdb-dev": "WT_CONFIG=dev node management/createdb.js",
-    "createdb": "node management/createdb.js"
+    "createdb": "node management/createdb.js",
+    "deploy-playground": "now -e NODE_ENV=production --team windingtree --token $NOW_TOKEN --docker --public --local-config=now-playground.json",
+    "alias-playground": "now alias --team windingtree --token=$NOW_TOKEN --local-config=now-playground.json"
   },
   "repository": {
     "type": "git",

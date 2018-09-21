@@ -1,0 +1,13 @@
+{
+  "name": "playground-wt-update-api",
+  "alias": "playground-update-api.windingtree.com",
+  "build": {
+    "env": {
+      "WT_CONFIG": "playground"
+    }
+  },
+  "env": {
+    "WT_CONFIG": "playground",
+    "WT_API_BASE_URL": "https://playground-update-api.windingtree.com"
+  }
+}

@@ -1,10 +1,14 @@
 const winston = require('winston');
+const knex = require('knex');
 
-const env = process.env.WT_CONFIG || 'dev';
-
-module.exports = Object.assign({
-  port: 8080,
-  baseUrl: process.env.WT_API_BASE_URL || 'http://localhost:8080',
+module.exports = {
+  db: knex({
+    client: 'sqlite3',
+    connection: {
+      filename: './.playground.sqlite',
+    },
+    useNullAsDefault: true,
+  }),
   logger: winston.createLogger({
     level: 'info',
     transports: [
@@ -14,4 +18,4 @@ module.exports = Object.assign({
       }),
     ],
   }),
-}, require(`./${env}`));
+};
