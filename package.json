@@ -1,6 +1,6 @@
 {
   "name": "wt-update-api",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "API written in node.js to facilitate publish / subscribe communication in WindingTree.",
   "main": "src/index.js",
   "scripts": {
