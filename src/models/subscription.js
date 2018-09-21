@@ -18,7 +18,7 @@ module.exports.createTable = async function () {
     table.timestamps(true, true);
 
     // Add an index for easier retrieval of subscriptions.
-    table.index(['wt_index', 'resource_type', 'active', 'resource_address', 'action']);
+    table.index(['wt_index', 'resource_type', 'active', 'resource_address', 'action', 'url', 'id']);
   });
 
   await db.schema.createTable(SUBJECTS_TABLE, (table) => {
@@ -27,7 +27,7 @@ module.exports.createTable = async function () {
     table.string('subscription_id', ID_LENGTH).notNullable();
 
     table.foreign('subscription_id').references('id').inTable(SUBSCRIPTIONS_TABLE);
-    table.unique(['name', 'subscription_id']);
+    table.unique(['subscription_id', 'name']);
   });
 };
 
