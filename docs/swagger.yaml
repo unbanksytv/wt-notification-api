@@ -4,7 +4,7 @@ servers:
     url: 'http://localhost:8080'
 info:
   description: API for distribution of update notifications by means of publish / subscribe.
-  version: 0.1.0
+  version: 'will-be-set-at-runtime'
   title: WT update API
 paths:
   /:
