@@ -20,9 +20,8 @@ as follows:
 2. Hotel data structure within WT contains an optional reference
    to an instance of this service. It is assumed that update
    notifications will be pushed there actively by the actors
-   representing the hotels. (If `wt-js-libs` or `wt-write-api`
-   are used for data publication, things should work out of the
-   box.)
+   representing the hotels. (If `wt-write-api` is used for
+   data publication, things should work out of the box.)
 3. Data consumers can subscribe to update notifications and
    receive them via webhooks.
 
