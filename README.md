@@ -196,3 +196,8 @@ $ curl localhost:8080/subscriptions/63ccc93d66321f37a7203a26567fd1b0 | python -m
 ```
 
 Note the `active` attribute denoting the subscription status.
+
+## Publicly available instances
+
+For currently available public instances of wt-update-api, please see [this
+page](https://github.com/windingtree/wiki/blob/master/developer-resources.md#publicly-available-wt-deployments).
