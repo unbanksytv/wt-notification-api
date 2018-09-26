@@ -6,7 +6,8 @@ const subscriptionSchema = require('./subscription-schema.js');
 const notificationSchema = require('./notification-schema.js');
 
 tv4.addFormat('url', (data) => {
-  if (validator.isURL(data, { 'require_protocol': true })) {
+  const opts = { 'require_protocol': true, 'require_tld': false };
+  if (validator.isURL(data, opts)) {
     return null;
   }
   return 'Not a valid URL.';
