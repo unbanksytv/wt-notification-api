@@ -1,5 +1,7 @@
 # WT Update API
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/windingtree/wt-update-api.svg)](https://greenkeeper.io/)
+
 API written in node.js to facilitate publish / subscribe
 communication within the WT platform.
 
