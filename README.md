@@ -37,7 +37,7 @@ This repository contains both the API specification (in
 ## How to run this API server
 
 ### Requirements
-- Nodejs 10.10.x
+- Nodejs 10.x
 
 ### Getting stared
 In order to install and run tests, we must:
