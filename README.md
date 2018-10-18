@@ -1,5 +1,7 @@
 # WT Update API
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/windingtree/wt-update-api.svg)](https://greenkeeper.io/)
+
 API written in node.js to facilitate publish / subscribe
 communication within the WT platform.
 
@@ -35,7 +37,7 @@ This repository contains both the API specification (in
 ## How to run this API server
 
 ### Requirements
-- Nodejs 10.10.x
+- Nodejs 10.x
 
 ### Getting stared
 In order to install and run tests, we must:
@@ -77,6 +79,17 @@ To run this "seriously", you will need to go through several steps:
     ```
     WT_CONFIG=<config> npm start
     ```
+
+### Running in docker
+You can run the whole API in a docker container as well, and you can
+control which config will be used by passing an appropriate value
+to WT_CONFIG variable both during build time and runtime.
+
+```sh
+$ docker build --build-arg WT_CONFIG=playground -t windingtree/wt-update-api .
+$ docker run -p 8080:8080 -e WT_CONFIG=playground windingtree/wt-update-api
+```
+- After that you can access the wt-write-api on local port `8080`
 
 ## Publishing notifications
 
@@ -196,3 +209,8 @@ $ curl localhost:8080/subscriptions/63ccc93d66321f37a7203a26567fd1b0 | python -m
 ```
 
 Note the `active` attribute denoting the subscription status.
+
+## Publicly available instances
+
+For currently available public instances of wt-update-api, please see [this
+page](https://github.com/windingtree/wiki/blob/master/developer-resources.md#publicly-available-wt-deployments).
