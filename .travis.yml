@@ -34,3 +34,6 @@ jobs:
     - pip install --user awscli
     - export PATH=$PATH:$HOME/.local/bin
     - npm run deploy-aws-playground
+env:
+  global:
+    secure: tLvEO5D9LG936jFvyd9kE46EA7qiprUJzdAo80fQ9qn6TYbHGk1sRpmQXS7REm0WLfduz8al/fFbU2kJ93SP/U5jzKmodC8GzYcU74S4cX0FZO9ghAopp6zvKxKe+OHHw7zrqAogCuHwxXQMMQjW83BvTQ2XfrfjljHVBIc9uzhp6JkdubOzDYEdbnnz+I1iLuEP4chsPnj/iUIjISJ2UoqacBVpW3ek/wLa5EGyj2J1Y+AfW/ioKy6k+FcXniRey57e3wp0kwRZYLSqJRNF8cjNGHfAsKgEgnRwDK8fXcM3D9yqopQATjJZaw6AGxSM67TecAFr/zchhBKOVOPKpvU/ke8tFW2hGGK7RzVEkM2y7vepeH3FPemj8LfVlphuVlOSx53Ig48DyNSCbzoLzPP8yeUssklx8JNDlhKfzJdesGP+elkyW8rNjc/LWPu2QSV3z930eMuPNGsykE/0rBztM4uulQrOuKrAfZ7mBX58YW4eTG3HR9z0DQL9WrcjW8/juK1LAx8f3fyGSL9tsAD0E7LkBtdJvG3Mp5hg/AnpeZthIi6lKgIIrVfS4rH+/IXGJnh7FR0IUD5DyOC3rjBTVIj2/MT43zTWKmKT8aGqLNzMxyGigznvouket4rk9sMC5zVYorfMhJlYnb3dYx8HirlJd9HQNBtuvqjmAcY=
