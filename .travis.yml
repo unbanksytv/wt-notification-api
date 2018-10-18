@@ -12,13 +12,25 @@ jobs:
     - npm run lint
     - npm test
     - npm run coverage
-  - stage: deploy
+  - stage: Build docker image and upload to AWS
+    sudo: true
+    services:
+    - docker
     install: true
+    if: tag IS present
+    script:
+    - pip install --user awscli
+    - export PATH=$PATH:$HOME/.local/bin
+    - eval $(aws ecr get-login --no-include-email --region eu-west-1)
+    - echo "Building for playground"
+    - docker build --build-arg WT_CONFIG=playground -t wt-update-api:$TRAVIS_BRANCH-playground
+    - docker tag wt-update-api:$TRAVIS_BRANCH-playground 029479441096.dkr.ecr.eu-west-1.amazonaws.com/wt-update-api:$TRAVIS_BRANCH-playground
+    - docker push 029479441096.dkr.ecr.eu-west-1.amazonaws.com/wt-update-api:$TRAVIS_BRANCH-playground
+  - stage: Start service from docker with latest merged tag
+    install: true
+    sudo: true
     if: branch = release/playground
     script:
-    - echo 'Deploying to NOW'
-    - npm install -g now
-    - npm run deploy-playground && npm run alias-playground
-env:
-  global:
-    secure: AS8rmyBSddUoVTMEPjnM8cWpMwYhVsmIT9zx6QktobERezaYuN19f6Rn0y3/40+wUrQxg5ww51+7cr+N13BnpBVHe5viZ4orvxPYGbiRSk4E0FPWXUWoyGBLHc9IUz3yJ2GTAjRQfOKJnKXRgj8Af/xvsT+Wt0ThU3r6sDSjrDoGtvSR67kduJ/vQfnvpfdTvl0eN9jPeZK7TBTrH9dAe0zPTA/b9z0Us4Dbg4T03PKyH9NMW6nXReYRz5BYDi3fO1LSQHnqhSBFE3XjxXOtjSB9FH8+w4c31HeHwvQOqPZdVXQloAdozxH5367e+GUmdg6QPSFmEMKO/7vshzHZd9UFDo3RGKpPTPXAJo0ZKZd+yXXz+X7tlG0XPN3Q3yDeE2jzkmbEyYTVBlNC6zJ9wVJvxqOyBlT9H6XYLQWiwC7Sbwi/XxxM2j53N4JSyDSwyuKRzmDD/aux9A63+VeOfsFq+L16ViRxj76JUo3HzqPfBzCjsmzaml95C0PykeAAdG6z3ErpBWoe2N/NYNwuLoPgSh9+gl0Ksc/ULBOnu1zFgf0RKM9+W8nI+rZawiXAw9vx2sleuI7wVWOqX+Qc6XKsRC8fOUfvqtpzwCrzTIuFtb/xnvGE9YclsqOoVM1GPX2T+ox5U1yMWVuOYg8LA3/00goF/VV4kt0XdxS4vUM=
+    - pip install --user awscli
+    - export PATH=$PATH:$HOME/.local/bin
+    - npm run deploy-aws-playground
