@@ -80,6 +80,17 @@ To run this "seriously", you will need to go through several steps:
     WT_CONFIG=<config> npm start
     ```
 
+### Running in docker
+You can run the whole API in a docker container as well, and you can
+control which config will be used by passing an appropriate value
+to WT_CONFIG variable both during build time and runtime.
+
+```sh
+$ docker build --build-arg WT_CONFIG=playground -t windingtree/wt-update-api .
+$ docker run -p 8080:8080 -e WT_CONFIG=playground windingtree/wt-update-api
+```
+- After that you can access the wt-write-api on local port `8080`
+
 ## Publishing notifications
 
 Currently, no authentication is needed when publishing update
