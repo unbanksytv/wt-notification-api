@@ -14,6 +14,14 @@ LATEST_TAG=`git describe --abbrev=0 --tags`
 WT_CONFIG=$ENVIRONMENT
 
 TASK_DEF="[{\"portMappings\": [{\"hostPort\": 0,\"protocol\": \"tcp\",\"containerPort\": 8080}],
+   \"logConfiguration\": {
+      \"logDriver\": \"awslogs\",
+      \"options\": {
+        \"awslogs-group\": \"shared-docker-cluster-t3\",
+        \"awslogs-region\": \"$AWS_REGION\",
+        \"awslogs-stream-prefix\": \"$ENVIRONMENT-wt-update-api\"
+      }
+    },
     \"environment\": [
       {
         \"name\": \"WT_API_BASE_URL\",
