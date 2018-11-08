@@ -1,6 +1,6 @@
 # WT Notification API
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/windingtree/wt-notification-api.svg)](https://greenkeeper.io/)
+[![Greenkeeper badge](https://badges.greenkeeper.io/windingtree/wt-update-api.svg)](https://greenkeeper.io/)
 
 API written in node.js to facilitate publish / subscribe
 communication within the WT platform.
