@@ -1,5 +1,5 @@
 {
-  "name": "wt-update-api",
+  "name": "wt-notification-api",
   "version": "0.1.1",
   "description": "API written in node.js to facilitate publish / subscribe communication in WindingTree.",
   "main": "src/index.js",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/windingtree/wt-update-api.git"
+    "url": "git+https://github.com/windingtree/wt-notification-api.git"
   },
   "keywords": [
     "winding-tree",
@@ -27,9 +27,9 @@
   "author": "WT Dev Team <support@winidngtree.com>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/windingtree/wt-update-api/issues"
+    "url": "https://github.com/windingtree/wt-notification-api/issues"
   },
-  "homepage": "https://github.com/windingtree/wt-update-api#readme",
+  "homepage": "https://github.com/windingtree/wt-notification-api#readme",
   "dependencies": {
     "bluebird": "^3.5.2",
     "body-parser": "^1.18.3",

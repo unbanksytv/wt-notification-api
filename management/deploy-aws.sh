@@ -3,8 +3,8 @@
 ENVIRONMENT=$1
 
 # AWS command opts
-TASK_FAMILY="$ENVIRONMENT-wt-update-api"
-SERVICE_NAME="$ENVIRONMENT-wt-update-api"
+TASK_FAMILY="$ENVIRONMENT-wt-notification-api"
+SERVICE_NAME="$ENVIRONMENT-wt-notification-api"
 AWS_REGION="eu-west-1"
 
 # container setup options
@@ -25,15 +25,15 @@ TASK_DEF="[{\"portMappings\": [{\"hostPort\": 0,\"protocol\": \"tcp\",\"containe
     \"environment\": [
       {
         \"name\": \"WT_API_BASE_URL\",
-        \"value\": \"https://$ENVIRONMENT-update-api.windingtree.com\"
+        \"value\": \"https://$ENVIRONMENT-notification-api.windingtree.com\"
       },
       {
         \"name\": \"WT_CONFIG\",
         \"value\": \"$WT_CONFIG\"
       }
     ],
-    \"image\": \"029479441096.dkr.ecr.eu-west-1.amazonaws.com/wt-update-api:$LATEST_TAG-$ENVIRONMENT\",
-    \"name\": \"wt-update-api\",
+    \"image\": \"029479441096.dkr.ecr.eu-west-1.amazonaws.com/wt-notification-api:$LATEST_TAG-$ENVIRONMENT\",
+    \"name\": \"wt-notification-api\",
     \"memoryReservation\": 128,
     \"cpu\": 128
   }]"

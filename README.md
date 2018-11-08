@@ -1,6 +1,6 @@
-# WT Update API
+# WT Notification API
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/windingtree/wt-update-api.svg)](https://greenkeeper.io/)
+[![Greenkeeper badge](https://badges.greenkeeper.io/windingtree/wt-notification-api.svg)](https://greenkeeper.io/)
 
 API written in node.js to facilitate publish / subscribe
 communication within the WT platform.
@@ -17,7 +17,7 @@ polling all resources all the time?
 The solution lies in a publish / subscribe mechanism that works
 as follows:
 
-1. There is an API specification for update publication
+1. There is an API specification for update notification publication
    / subscription together with a reference implementation.
 2. Hotel data structure within WT contains an optional reference
    to an instance of this service. It is assumed that update
@@ -42,7 +42,7 @@ This repository contains both the API specification (in
 ### Getting stared
 In order to install and run tests, we must:
 ```
-git clone git@github.com:windingtree/wt-update-api.git
+git clone git@github.com:windingtree/wt-notification-api.git
 nvm install
 npm install
 npm test
@@ -86,8 +86,8 @@ control which config will be used by passing an appropriate value
 to WT_CONFIG variable both during build time and runtime.
 
 ```sh
-$ docker build --build-arg WT_CONFIG=playground -t windingtree/wt-update-api .
-$ docker run -p 8080:8080 -e WT_CONFIG=playground windingtree/wt-update-api
+$ docker build --build-arg WT_CONFIG=playground -t windingtree/wt-notification-api .
+$ docker run -p 8080:8080 -e WT_CONFIG=playground windingtree/wt-notification-api
 ```
 - After that you can access the wt-write-api on local port `8080`
 
@@ -212,5 +212,5 @@ Note the `active` attribute denoting the subscription status.
 
 ## Publicly available instances
 
-For currently available public instances of wt-update-api, please see [this
+For currently available public instances of wt-notification-api, please see [this
 page](https://github.com/windingtree/wiki/blob/master/developer-resources.md#publicly-available-wt-deployments).
