@@ -19,7 +19,7 @@ TASK_DEF="[{\"portMappings\": [{\"hostPort\": 0,\"protocol\": \"tcp\",\"containe
       \"options\": {
         \"awslogs-group\": \"shared-docker-cluster-t3\",
         \"awslogs-region\": \"$AWS_REGION\",
-        \"awslogs-stream-prefix\": \"$ENVIRONMENT-wt-update-api\"
+        \"awslogs-stream-prefix\": \"$ENVIRONMENT-wt-notification-api\"
       }
     },
     \"environment\": [
