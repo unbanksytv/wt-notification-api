@@ -24,13 +24,14 @@ describe('models - subscription', () => {
       });
       assert.property(subscription, 'id');
       assert.equal(subscription.id.length, 32);
-      assert.property(subscription, 'wtIndex', wtIndex);
-      assert.property(subscription, 'resourceType', resourceType);
-      assert.property(subscription, 'resourceAddress', resourceAddress);
-      assert.property(subscription, 'action', 'update');
-      assert.property(subscription, 'url', 'http://example.com/callback');
-      assert.property(subscription, 'subjects', ['description', 'ratePlans']);
-      assert.property(subscription, 'active', true);
+      assert.propertyVal(subscription, 'wtIndex', wtIndex);
+      assert.propertyVal(subscription, 'resourceType', resourceType);
+      assert.propertyVal(subscription, 'resourceAddress', resourceAddress);
+      assert.propertyVal(subscription, 'action', 'create');
+      assert.propertyVal(subscription, 'url', 'http://example.com/callback');
+      assert.property(subscription, 'subjects');
+      assert.deepEqual(subscription.subjects, ['description', 'ratePlans']);
+      assert.propertyVal(subscription, 'active', true);
     });
 
     it('should work without optional attributes', async () => {
@@ -40,10 +41,10 @@ describe('models - subscription', () => {
         url: 'http://example.com/callback',
       });
       assert.property(subscription, 'id');
-      assert.property(subscription, 'wtIndex', wtIndex);
-      assert.property(subscription, 'resourceType', resourceType);
-      assert.property(subscription, 'url', 'http://example.com/callback');
-      assert.property(subscription, 'active', true);
+      assert.propertyVal(subscription, 'wtIndex', wtIndex);
+      assert.propertyVal(subscription, 'resourceType', resourceType);
+      assert.propertyVal(subscription, 'url', 'http://example.com/callback');
+      assert.propertyVal(subscription, 'active', true);
       assert.equal(subscription.hotel, undefined);
       assert.equal(subscription.action, undefined);
       assert.equal(subscription.subjects, undefined);
@@ -99,10 +100,10 @@ describe('models - subscription', () => {
         resourceType,
         url: 'http://example.com/callback',
       });
-      assert.property(subscription, 'active', true);
+      assert.propertyVal(subscription, 'active', true);
       await Subscription.deactivate(subscription.id);
       subscription = await Subscription.get(subscription.id);
-      assert.property(subscription, 'active', false);
+      assert.propertyVal(subscription, 'active', false);
     });
 
     it('should return boolean based on whether the deactivation was successful or not', async () => {
