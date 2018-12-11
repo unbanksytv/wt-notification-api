@@ -83,10 +83,11 @@ To run this "seriously", you will need to go through several steps:
 ### Running in docker
 You can run the whole API in a docker container as well, and you can
 control which config will be used by passing an appropriate value
-to WT_CONFIG variable both during build time and runtime.
+to WT_CONFIG variable at runtime. Database will be setup during the
+container startup in the current setup.
 
 ```sh
-$ docker build --build-arg WT_CONFIG=playground -t windingtree/wt-notification-api .
+$ docker build -t windingtree/wt-notification-api .
 $ docker run -p 8080:8080 -e WT_CONFIG=playground windingtree/wt-notification-api
 ```
 - After that you can access the wt-write-api on local port `8080`
