@@ -84,7 +84,8 @@ To run this "seriously", you will need to go through several steps:
 You can run the whole API in a docker container as well, and you can
 control which config will be used by passing an appropriate value
 to WT_CONFIG variable at runtime. Database will be setup during the
-container startup in the current setup.
+container startup in the current setup. You can skip this with
+`SKIP_DB_SETUP` environment variable.
 
 ```sh
 $ docker build -t windingtree/wt-notification-api .
