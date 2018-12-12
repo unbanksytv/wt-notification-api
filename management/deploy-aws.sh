@@ -24,7 +24,7 @@ TASK_DEF="[{\"portMappings\": [{\"hostPort\": 0,\"protocol\": \"tcp\",\"containe
     },
     \"environment\": [
       {
-        \"name\": \"WT_API_BASE_URL\",
+        \"name\": \"BASE_URL\",
         \"value\": \"https://$ENVIRONMENT-notification-api.windingtree.com\"
       },
       {
